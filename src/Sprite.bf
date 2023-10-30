@@ -12,6 +12,8 @@ public class Sprite
 
 	public CollisionMask CollisionMask;
 
+	public Vector2Int Origin = .(0, 0);
+
 	[BonIgnore]
 	public Vector2Int Size = .(64, 64);
 }

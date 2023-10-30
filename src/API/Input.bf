@@ -238,6 +238,25 @@ extension Fanty
 	public static bool IsKeyReleased(KeyCode keycode)
 		=> RaylibBeef.Raylib.IsKeyReleased((int32)keycode);
 
+	/// X position of the Mouse Cursor within the current Room.
 	public static float MouseX => RaylibBeef.Raylib.GetMouseX();
+	/// Y position of the Mouse Cursor within the current Room.
 	public static float MouseY => RaylibBeef.Raylib.GetMouseY();
+
+	/// X position of the Mouse Cursor (in pixels) within the Game Window.
+	public static float WindowMouseX => RaylibBeef.Raylib.GetMouseX();
+	/// Y position of the Mouse Cursor (in pixels) within the Game Window.
+	public static float WindowMouseY => RaylibBeef.Raylib.GetMouseY();
+
+	public static bool IsMouseButtonDown(int button)
+		=> RaylibBeef.Raylib.IsMouseButtonDown((int32)button);
+
+	public static bool IsMouseButtonUp(int button)
+		=> RaylibBeef.Raylib.IsMouseButtonUp((int32)button);
+
+	public static bool IsMouseButtonPressed(int button)
+		=> RaylibBeef.Raylib.IsMouseButtonPressed((int32)button);
+
+	public static bool IsMouseButtonReleased(int button)
+		=> RaylibBeef.Raylib.IsMouseButtonReleased((int32)button);
 }

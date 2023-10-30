@@ -3,10 +3,36 @@ namespace FantyEngine;
 
 public class GameObject
 {
-	public float x;
-	public float y;
+	private float m_internalX;
+	private float m_InternalY;
+
+	/// Horizontal position in the current room.
+	public float x
+	{
+		get => m_internalX;
+		set
+		{
+			m_internalX = value;
+		}
+	}
+	/// Vertical position in the current room.
+	public float y
+	{
+		get => m_InternalY;
+		set
+		{
+			m_InternalY = value;
+		}
+	}
+
+	public float xOrigin => (SpriteAsset == null ? 0 : SpriteAsset.Origin.x);
+	public float yOrigin => (SpriteAsset == null ? 0 : SpriteAsset.Origin.y);
+
+	/// Angle (rotation) of the Sprite.
+	public float ImageAngle = 0.0f;
 
 	private String m_SpriteIndex ~ if (_ != null) delete _;
+	/// The name of the Sprite Asset.
 	public String SpriteIndex
 	{
 		get { return m_SpriteIndex; }
@@ -23,6 +49,7 @@ public class GameObject
 	}
 
 	private Sprite* m_SpriteAsset;
+	/// The actual SpriteAsset attatched to the GameObject.
 	public Sprite SpriteAsset { get { return *m_SpriteAsset; } }
 
 	private int m_ImageIndex = 0;
@@ -78,63 +105,80 @@ public class GameObject
 		public int Frame = 0;
 	}
 
-	public virtual void Create(){}
-
-	public virtual void Destroy(){}
-
-	public virtual void Step(){}
-
-	public virtual void BeginStep(){}
-
-	public virtual void EndStep(){}
-
-	public virtual void FixedStep(){}
-
-	public virtual void Draw()
+	public void Destroy(GameObject gameObject)
 	{
-		if (SpriteAsset.Frames.Count > 1 && ImageSpeed > 0.0f)
-		{
-			spriteProperties.Clock += Fanty.DeltaTime;
-			var currentFrame = spriteProperties.Frame % SpriteAsset.Frames.Count;
-			var secondsPerFrame = ((float)SpriteAsset.Frames[currentFrame].Length / SpriteAsset.FPS) * ImageSpeed;
-			while (spriteProperties.Clock >= secondsPerFrame)
-			{
-				spriteProperties.Clock -= secondsPerFrame;
-				spriteProperties.Frame++;
-				if (spriteProperties.Frame >= SpriteAsset.Frames.Count)
-					spriteProperties.Frame = 0;
-				m_ImageIndex = spriteProperties.Frame;
-			}
-		}
-
-		var collisionMask = CollisionMask;
-
-		var oBBox = Rectangle(
-			x + collisionMask.x,
-			y + collisionMask.y,
-			collisionMask.width,
-			collisionMask.height);
-		Fanty.DrawSprite(SpriteIndex, m_ImageIndex, x, y, ImageXScale, ImageYScale, 0);
-
-		// let minY = Math.Min(oBBox.y, oBBox.height);
-		// let maxY = Math.Max(oBBox.y, oBBox.height);
-		RaylibBeef.Raylib.DrawRectangleRec(.(oBBox.x, oBBox.y, oBBox.width, oBBox.height), Color(255, 0, 0, 150));
-		// Fanty.DrawRectangleColor(oBBox.x, oBBox.y, oBBox.width, oBBox.height, Color(255, 0, 0, 150));
+		delete gameObject;
+		Fanty.[Friend]GetCurrentRoom().GameObjects.Remove(gameObject);
 	}
 
-	public virtual void DrawGUI(){}
+	public virtual void CreateEvent(){}
 
-	public virtual void DrawBegin(){}
+	public virtual void DestroyEvent(){}
 
-	public virtual void DrawEnd(){}
+	public virtual void StepEvent(){}
 
-	public virtual void DrawGUIBegin(){}
+	public virtual void BeginStepEvent(){}
 
-	public virtual void DrawGUIEnd(){}
+	public virtual void EndStepEvent(){}
 
-	public virtual void PreDraw(){}
+	public virtual void FixedStepEvent(){}
 
-	public virtual void PostDraw(){}
+	public virtual void DrawEvent()
+	{
+		if (!String.IsNullOrEmpty(SpriteIndex))
+		{
+			if (SpriteAsset.Frames.Count > 1 && ImageSpeed > 0.0f)
+			{
+				spriteProperties.Clock += Fanty.DeltaTime;
+				var currentFrame = spriteProperties.Frame % SpriteAsset.Frames.Count;
+				var secondsPerFrame = ((float)SpriteAsset.Frames[currentFrame].Length / SpriteAsset.FPS) * ImageSpeed;
+				while (spriteProperties.Clock >= secondsPerFrame)
+				{
+					spriteProperties.Clock -= secondsPerFrame;
+					spriteProperties.Frame++;
+					m_ImageIndex = spriteProperties.Frame;
+					if (spriteProperties.Frame >= SpriteAsset.Frames.Count)
+					{
+						spriteProperties.Frame = 0;
+						m_ImageIndex = 0;
+						AnimationEndEvent();
+					}
+				}
+			}
+			// Fanty.DrawSprite(SpriteIndex, m_ImageIndex, x - xOrigin, y - yOrigin, ImageXScale, ImageYScale, ImageAngle);
+			Fanty.DrawSpriteExt(SpriteIndex, m_ImageIndex, .(x, y), .(xOrigin, yOrigin), .(ImageXScale, ImageYScale), ImageAngle);
 
-	public virtual void WindowResize(){}
+			/*
+			var collisionMask = CollisionMask;
+
+			var oBBox = Rectangle(
+				(x - xOrigin) + collisionMask.x,
+				(y - yOrigin) + collisionMask.y,
+				collisionMask.width,
+				collisionMask.height);
+
+			RaylibBeef.Raylib.DrawRectangleRec(.(oBBox.x, oBBox.y, oBBox.width, oBBox.height), Color(255, 0, 0, 150));
+			*/
+		}
+	}
+
+	public virtual void DrawGUIEvent(){}
+
+	public virtual void DrawBeginEvent(){}
+
+	public virtual void DrawEndEvent(){}
+
+	public virtual void DrawGUIBeginEvent(){}
+
+	public virtual void DrawGUIEndEvent(){}
+
+	public virtual void PreDrawEvent(){}
+
+	public virtual void PostDrawEvent(){}
+
+	public virtual void WindowResizeEvent(){}
+
+	public virtual void OutsideRoomEvent(){}
+
+	public virtual void AnimationEndEvent(){}
 }

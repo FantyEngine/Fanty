@@ -1,6 +1,5 @@
 using System;
 using FantyEngine;
-using Bon;
 
 namespace Sandbox;
 
@@ -11,7 +10,15 @@ class Program
 		let game = scope Game("Sandbox");
 		game.AddGameObject<Player>(new .());
 
+		game.AddGameObject<Gun>(new .());
 
+		for (var i < 8)
+		{
+			let wall = game.AddGameObject<Wall>(new .());
+			wall.x = i * 32;
+			wall.y = 32 * 8;
+		}
+		/*
 		for (var i < 8)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
@@ -61,34 +68,10 @@ class Program
 			wall.x = 192 + (i * 64);
 			wall.y = 240;
 		}
-
-		/*
-		gBonEnv.serializeFlags |= .Verbose;
-		let structure = scope Sprite()
-		{
-		};
-
-		var frames = scope System.Collections.List<SpriteFrame>();
-		frames.Add(new .() { TextureRegion = .(0, 0, 32, 32) });
-
-		structure.Frames = new .[frames.Count];
-		frames.CopyTo(structure.Frames);
-
-		let str = Bon.Serialize(structure, .. scope .());
-		Console.WriteLine(str);
-
-		Sprite a = scope .();
-		Bon.Deserialize(ref a, str);
 		*/
 
 		game.Run();
 
 		return 0;
-	}
-
-	[BonTarget]
-	class ass
-	{
-		public int a = 0;
 	}
 }

@@ -24,6 +24,11 @@ extension Fanty
 
 	public static void DrawSprite(String assetName, int subimg, float x, float y, float xscale, float yscale, float rot, Color color = Color.white)
 	{
+		DrawSpriteExt(assetName, subimg, .(x, y), .zero, .(xscale, yscale), rot, color);
+	}
+
+	public static void DrawSpriteExt(String assetName, int subimg, Vector2 pos, Vector2 origin, Vector2 scale, float rot, Color color = Color.white)
+	{
 		var spriteAsset = AssetsManager.Sprites[assetName];
 
 		float sourceX = spriteAsset.Frames[subimg].TexturePageCoordinates.x;
@@ -31,13 +36,13 @@ extension Fanty
 		float sourceSizeX = spriteAsset.Size.x;
 		float sourceSizeY = spriteAsset.Size.y;
 
-		if (xscale < 0) { sourceSizeX *= -1; }
-		if (yscale < 0) { sourceSizeY *= -1; }
+		if (scale.x < 0) { sourceSizeX *= -1; }
+		if (scale.y < 0) { sourceSizeY *= -1; }
 
 		RaylibBeef.Raylib.DrawTexturePro(AssetsManager.MainTexturePage,
 			.(sourceX, sourceY, sourceSizeX, sourceSizeY),
-			.(x, y, spriteAsset.Size.x * Math.Abs(xscale), spriteAsset.Size.y * Math.Abs(yscale)),
-			.(0, 0),
+			.(pos.x, pos.y, spriteAsset.Size.x * Math.Abs(scale.x), spriteAsset.Size.y * Math.Abs(scale.y)),
+			.(origin.x, origin.y),
 			rot,
 			color);
 	}

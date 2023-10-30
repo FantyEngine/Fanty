@@ -5,9 +5,11 @@ namespace Sandbox;
 
 public class Player : GameObject
 {
+	public static Player Instance { get; private set; }
+
 	private float hsp = 0.0f;
 	private float vsp = 0.0f;
-	private float grv = 0.1f;
+	private float grv = 0.3f;
 	private float walkSpd = 4.0f;
 
 	private bool onGround = false;
@@ -21,20 +23,22 @@ public class Player : GameObject
 
 	private float timeSinceJumpKeyPressed = 0.0f;
 
-	public override void Create()
+	public override void CreateEvent()
 	{
+		Instance = this;
+
 		SpriteIndex = "sPlayer";
 		CollisionMaskSameAsSprite = false;
 		CollisionMaskAsset = new $"sPlayer";
 
 		x = 32;
-		y = 16;
+		y = 32;
 	}
 
-	public override void Step()
+	public override void StepEvent()
 	{
-		keyLeft = Fanty.IsKeyDown(.LeftArrow);
-		keyRight = Fanty.IsKeyDown(.RightArrow);
+		keyLeft = Fanty.IsKeyDown(.LeftArrow) || Fanty.IsKeyDown(.A);
+		keyRight = Fanty.IsKeyDown(.RightArrow) || Fanty.IsKeyDown(.D);
 		keyJump = Fanty.IsKeyPressed(.Space);
 		keyJumpHeld = Fanty.IsKeyDown(.Space);
 
@@ -54,7 +58,7 @@ public class Player : GameObject
 			coyoteTimeCounter = coyoteTime;
 		}
 
-		let jumpSpd = -4.0f;
+		let jumpSpd = -7.0f;
 		if (coyoteTimeCounter > 0.0f && keyJump)
 		{
 			vsp = jumpSpd;
@@ -116,9 +120,9 @@ public class Player : GameObject
 			ImageXScale = Math.Sign(hsp);
 	}
 
-	public override void Draw()
+	public override void DrawEvent()
 	{
-		base.Draw();
+		base.DrawEvent();
 
 	}
 }

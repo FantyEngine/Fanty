@@ -53,7 +53,9 @@ public abstract class Application
 				if (m_RoomRuntime.Room.EnableViewports)
 					Raylib.BeginMode2D(m_RoomRuntime.camera);
 
+				PreDrawCurrentRoom();
 				DrawCurrentRoom();
+				PostDrawCurrentRoom();
 
 				if (m_RoomRuntime.Room.EnableViewports)
 					Raylib.EndMode2D();
@@ -108,17 +110,17 @@ public abstract class Application
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.BeginStep();
+			object.BeginStepEvent();
 		}
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.Step();
+			object.StepEvent();
 		}
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.EndStep();
+			object.EndStepEvent();
 		}
 	}
 
@@ -127,7 +129,16 @@ public abstract class Application
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.FixedStep();
+			object.FixedStepEvent();
+		}
+	}
+	
+	private void PreDrawCurrentRoom()
+	{
+		for (var object in m_RoomRuntime.Room.GameObjects)
+		{
+			m_RoomRuntime.CurrentGameObject = &object;
+			object.PreDrawEvent();
 		}
 	}
 
@@ -138,17 +149,26 @@ public abstract class Application
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.DrawBegin();
+			object.DrawBeginEvent();
 		}
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.Draw();
+			object.DrawEvent();
 		}
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.DrawEnd();
+			object.DrawEndEvent();
+		}
+	}
+
+	private void PostDrawCurrentRoom()
+	{
+		for (var object in m_RoomRuntime.Room.GameObjects)
+		{
+			m_RoomRuntime.CurrentGameObject = &object;
+			object.PostDrawEvent();
 		}
 	}
 
@@ -157,14 +177,14 @@ public abstract class Application
 		for (var object in m_RoomRuntime.Room.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
-			object.Destroy();
+			object.DestroyEvent();
 		}
 	}
 
 	public T AddGameObject<T>(T item) where T : GameObject
 	{
 		m_RoomRuntime.Room.GameObjects.Add(item);
-		item.Create();
+		item.CreateEvent();
 
 		return item;
 	}

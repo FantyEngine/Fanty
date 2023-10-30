@@ -4,7 +4,7 @@ namespace Sandbox;
 
 public class Wall : GameObject
 {
-	public override void Create()
+	public override void CreateEvent()
 	{
 		SpriteIndex = "sSolidWall";
 	}

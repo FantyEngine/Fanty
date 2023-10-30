@@ -16,5 +16,6 @@
                         width = 32,
                         height = 32
                 }
-        }
+        },
+		Origin = { x = 10, y = 4 }
 }

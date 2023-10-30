@@ -13,10 +13,10 @@ extension Fanty
 			return false;
 		var collisionMask = original.CollisionMask;
 		let oBBox = Rectangle(
-			x + collisionMask.x,
-			y + collisionMask.y,
-			x + collisionMask.x + collisionMask.width,
-			y + collisionMask.y + collisionMask.height);
+			(x - original.xOrigin) + collisionMask.x,
+			(y - original.yOrigin),
+			(x - original.xOrigin) + collisionMask.x + collisionMask.width,
+			(y - original.yOrigin) + collisionMask.y + collisionMask.height);
 
 		for (let obj in room.GameObjects)
 		{
@@ -33,10 +33,10 @@ extension Fanty
 					objSpriteAsset.y = obj.SpriteAsset.Size.y - (objSpriteAsset.y + objSpriteAsset.height);
 				}
 				let objBox = Rectangle(
-					obj.x + objSpriteAsset.x,
-					obj.y + objSpriteAsset.y,
-					obj.x + objSpriteAsset.x + objSpriteAsset.width,
-					obj.y + objSpriteAsset.y + objSpriteAsset.height);
+					(obj.x - obj.xOrigin) + objSpriteAsset.x,
+					(obj.y - obj.yOrigin) + objSpriteAsset.y,
+					(obj.x - obj.xOrigin) + objSpriteAsset.x + objSpriteAsset.width,
+					(obj.y - obj.yOrigin) + objSpriteAsset.y + objSpriteAsset.height);
 				if (objBox.Overlaps(oBBox))
 				{
 					return true;

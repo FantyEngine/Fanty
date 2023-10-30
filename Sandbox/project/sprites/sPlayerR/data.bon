@@ -37,5 +37,6 @@
                         width = 29,
                         height = 47
                 }
-        }
+        },
+		Origin = { x = 24, y = 24 }
 }

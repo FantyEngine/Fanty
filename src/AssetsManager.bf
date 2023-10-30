@@ -54,7 +54,7 @@ public class AssetsManager
 
 					Sprites.Add(folder.GetFileName(.. new .()), sprite);
 
-					Console.WriteLine(Bon.Serialize(sprite, .. scope .()));
+					// Console.WriteLine(Bon.Serialize(sprite, .. scope .()));
 				}
 				spriteIndex++;
 			}
