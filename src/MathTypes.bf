@@ -1,4 +1,5 @@
 using Bon;
+using System;
 namespace FantyEngine;
 
 [BonTarget]
@@ -107,6 +108,27 @@ public struct Rectangle
 		set mut { width = value.x; height = value.y; }
 	}
 
+	public float xMin
+	{
+		get => x;
+		// get => Math.Min(x, width);
+	}
+	public float yMin
+	{
+		get => y;
+		// get => Math.Min(y, height);
+	}
+	public float xMax
+	{
+		get => width;
+		// get => Math.Max(x, width);
+	}
+	public float yMax
+	{
+		get => height;
+		// get => Math.Max(y, height);
+	}
+
 	public this()
 	{
 	}
@@ -122,10 +144,10 @@ public struct Rectangle
 	public bool Overlaps(Rectangle other)
 	{
 		return (
-			other.width > x &&
-			other.x < width &&
-			other.height > y &&
-			other.y < height);
+			other.xMax > xMin &&
+			other.xMin < xMax &&
+			other.yMax > yMin &&
+			other.yMin < yMax);
 	}
 
 	public static implicit operator RaylibBeef.Rectangle(Rectangle rect)

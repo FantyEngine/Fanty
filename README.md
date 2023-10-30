@@ -1,0 +1,1 @@
+A game framework designed around the GameMaker API.

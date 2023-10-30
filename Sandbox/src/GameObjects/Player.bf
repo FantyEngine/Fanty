@@ -3,7 +3,7 @@ using System;
 
 namespace Sandbox;
 
-public class TestObject : GameObject
+public class Player : GameObject
 {
 	private float hsp = 0.0f;
 	private float vsp = 0.0f;
@@ -23,10 +23,12 @@ public class TestObject : GameObject
 
 	public override void Create()
 	{
-		SpriteIndex = new $"sSolid";
+		SpriteIndex = "sPlayer";
+		CollisionMaskSameAsSprite = false;
+		CollisionMaskAsset = new $"sPlayer";
 
 		x = 32;
-		y = 96;
+		y = 16;
 	}
 
 	public override void Step()
@@ -86,16 +88,37 @@ public class TestObject : GameObject
 		x += hsp;
 		y += vsp;
 
-		wasOnGround = onGround;
-	}
 
-	public override void FixedStep()
-	{
-		
+		wasOnGround = onGround;
+
+		// Animation
+		if (!Fanty.PlaceMeeting<Wall>(x, y + 1))
+		{
+			SpriteIndex = "sPlayerA";
+			ImageSpeed = 0;
+			if (Math.Sign(vsp) > 0) ImageIndex = 1; else ImageIndex = 0;
+		}
+		else
+		{
+			ImageSpeed = 1;
+			if (hsp == 0)
+			{
+				SpriteIndex = "sPlayer";
+			}
+			else
+			{
+				SpriteIndex = "sPlayerR";
+			}
+		}
+
+
+		if (hsp != 0)
+			ImageXScale = Math.Sign(hsp);
 	}
 
 	public override void Draw()
 	{
 		base.Draw();
+
 	}
 }

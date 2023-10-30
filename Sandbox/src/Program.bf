@@ -9,56 +9,56 @@ class Program
 	public static int Main(String[] args)
 	{
 		let game = scope Game("Sandbox");
-		game.AddGameObject<TestObject>(new .());
+		game.AddGameObject<Player>(new .());
 
 
 		for (var i < 8)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
 			wall.x = 0;
-			wall.y = 160 + (i * 16);
+			wall.y = 160 + (i * 64);
 		}
 		for (var i < 28)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
-			wall.x = i * 16;
+			wall.x = i * 64;
 			wall.y = 272;
 		}
 		for (var i < 8)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
 			wall.x = 432;
-			wall.y = 160 + (i * 16);
+			wall.y = 160 + (i * 64);
 		}
 		for (var i < 5)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
-			wall.x = 432 + (i * 16);
+			wall.x = 432 + (i * 64);
 			wall.y = 160;
 		}
 		for (var i < 12)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
 			wall.x = 496;
-			wall.y = 160 + (i * 16);
+			wall.y = 160 + (i * 64);
 		}
 
 		for (var i < 2)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
 			wall.x = 176;
-			wall.y = 240 + (i * 16);
+			wall.y = 240 + (i * 64);
 		}
 		for (var i < 2)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
 			wall.x = 256;
-			wall.y = 240 + (i * 16);
+			wall.y = 240 + (i * 64);
 		}
 		for (var i < 4)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
-			wall.x = 192 + (i * 16);
+			wall.x = 192 + (i * 64);
 			wall.y = 240;
 		}
 

@@ -6,6 +6,6 @@ public class Wall : GameObject
 {
 	public override void Create()
 	{
-		SpriteIndex = new $"sSolidWall";
+		SpriteIndex = "sSolidWall";
 	}
 }

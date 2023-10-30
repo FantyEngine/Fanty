@@ -1,20 +1,20 @@
 {
-        FPS = 30,
+        FPS = 12,
         Frames = [
                 {
                         TextureRegion = {
-                                width = 64,
-                                height = 64
+                                width = 48,
+                                height = 48
                         },
                         Length = 1
                 }
         ],
         CollisionMask = {
                 Rect = {
-						x = 0,
-						y = 0,
-                        width = 64,
-                        height = 64
+						x = 18,
+						y = 14,
+                        width = 19,
+                        height = 34
                 }
         }
 }

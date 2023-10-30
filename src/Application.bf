@@ -35,7 +35,7 @@ public abstract class Application
 			if (m_RoomRuntime.Room.EnableViewports)
 			{
 				m_RoomRuntime.camera.target = .(m_RoomRuntime.Room.Viewport0.CameraProperties.x, m_RoomRuntime.Room.Viewport0.CameraProperties.y);
-				m_RoomRuntime.camera.zoom = 2;
+				m_RoomRuntime.camera.zoom = 1;
 			}
 
 			Fanty.[Friend]CurrentTime += Fanty.DeltaTime;
@@ -79,7 +79,7 @@ public abstract class Application
 
 	private void Init()
 	{
-		Raylib.InitWindow(1280, 720, m_WindowTitle);
+		Raylib.InitWindow(1024, 768, m_WindowTitle);
 		Raylib.InitAudioDevice();
 		Raylib.SetTargetFPS((int32)GameOptions.TargetFixedStep);
 
@@ -88,6 +88,7 @@ public abstract class Application
 		m_RoomRuntime = new .();
 		m_RoomRuntime.Room = new Room();
 		m_RoomRuntime.Room.EnableViewports = true;
+		m_RoomRuntime.Room.BackgroundColor = Color("#00a7ff");
 	}
 
 	private void Exit()

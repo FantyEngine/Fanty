@@ -19,7 +19,7 @@ public class Sprite
 [BonTarget]
 public struct CollisionMask
 {
-	public Vector4 Rect;
+	public Rectangle Rect;
 }
 
 [BonTarget]

@@ -1,0 +1,41 @@
+{
+        FPS = 12,
+        Frames = [
+                {
+                        TextureRegion = {
+                                width = 48,
+                                height = 48
+                        },
+                        Length = 1
+                },
+				{
+                        TextureRegion = {
+                                width = 48,
+                                height = 48
+                        },
+                        Length = 1
+                },
+				{
+                        TextureRegion = {
+                                width = 48,
+                                height = 48
+                        },
+                        Length = 1
+                },
+				{
+                        TextureRegion = {
+                                width = 48,
+                                height = 48
+                        },
+                        Length = 1
+                }
+        ],
+        CollisionMask = {
+                Rect = {
+						x = 18,
+						y = 14,
+                        width = 29,
+                        height = 47
+                }
+        }
+}

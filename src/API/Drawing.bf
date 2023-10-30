@@ -22,14 +22,23 @@ extension Fanty
 			RaylibBeef.Raylib.DrawRectangleLinesEx(.(x1, y1, x2 - x1, y2 - y1), 1, color);
 	}
 
-	public static void DrawSprite(String assetName, int subimg, float x, float y)
+	public static void DrawSprite(String assetName, int subimg, float x, float y, float xscale, float yscale, float rot, Color color = Color.white)
 	{
 		var spriteAsset = AssetsManager.Sprites[assetName];
+
+		float sourceX = spriteAsset.Frames[subimg].TexturePageCoordinates.x;
+		float sourceY = spriteAsset.Frames[subimg].TexturePageCoordinates.y;
+		float sourceSizeX = spriteAsset.Size.x;
+		float sourceSizeY = spriteAsset.Size.y;
+
+		if (xscale < 0) { sourceSizeX *= -1; }
+		if (yscale < 0) { sourceSizeY *= -1; }
+
 		RaylibBeef.Raylib.DrawTexturePro(AssetsManager.MainTexturePage,
-			.(spriteAsset.Frames[subimg].TexturePageCoordinates.x, spriteAsset.Frames[subimg].TexturePageCoordinates.y, spriteAsset.Size.x, spriteAsset.Size.y),
-			.(x, y, spriteAsset.Size.x, spriteAsset.Size.y),
+			.(sourceX, sourceY, sourceSizeX, sourceSizeY),
+			.(x, y, spriteAsset.Size.x * Math.Abs(xscale), spriteAsset.Size.y * Math.Abs(yscale)),
 			.(0, 0),
-			0,
-			Color.white);
+			rot,
+			color);
 	}
 }
