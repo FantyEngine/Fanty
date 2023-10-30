@@ -1,0 +1,14 @@
+FileVersion = 1
+
+[Project]
+Name = "FantyEngine"
+TargetType = "BeefLib"
+StartupObject = "FantyEngine.Program"
+
+[Configs.Debug.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\libs_x64\\raylibdll.lib"]
+PostBuildCmds = ["CopyToDependents(\"$(ProjectDir)/libs/libs_x64/*.dll\")"]
+
+[Configs.Release.Win64]
+LibPaths = ["$(ProjectDir)\\libs\\libs_x64\\raylibdll.lib"]
+PostBuildCmds = ["CopyToDependents(\"$(ProjectDir)/libs/libs_x64/*.dll\")"]

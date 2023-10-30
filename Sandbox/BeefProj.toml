@@ -1,0 +1,6 @@
+FileVersion = 1
+Dependencies = {corlib = "*", FantyEngine = "*"}
+
+[Project]
+Name = "Sandbox"
+StartupObject = "Sandbox.Program"
