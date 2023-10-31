@@ -1,5 +1,5 @@
 FileVersion = 1
-Dependencies = {corlib = "*", bon = "*"}
+Dependencies = {corlib = "*", bon = "*", ImGui = "*"}
 
 [Project]
 Name = "FantyEngine"

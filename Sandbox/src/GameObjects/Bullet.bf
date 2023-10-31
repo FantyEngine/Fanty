@@ -26,6 +26,11 @@ public class Bullet : GameObject
 			Destroy(this);
 	}
 
+	public override void OutsideRoomEvent()
+	{
+		Destroy(this);
+	}
+
 	public override void AnimationEndEvent()
 	{
 		ImageSpeed = 0;

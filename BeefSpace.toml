@@ -1,5 +1,5 @@
 FileVersion = 1
-Projects = {FantyEngine = {Path = "."}, Sandbox = {Path = "Sandbox"}, bon = {Path = "vendor/bon"}}
+Projects = {FantyEngine = {Path = "."}, Sandbox = {Path = "Sandbox"}, bon = {Path = "vendor/bon"}, ImGui = {Path = "vendor/imgui-beef"}}
 
 [Workspace]
 StartupProject = "Sandbox"

@@ -26,18 +26,14 @@ public abstract class Application
 
 		m_WindowTitle = new String(title);
 		Init();
+
+		rlImGui.Setup(true);
 	}
 
 	public void Run()
 	{
 		while (!Raylib.WindowShouldClose())
 		{
-			if (m_RoomRuntime.Room.EnableViewports)
-			{
-				m_RoomRuntime.camera.target = .(m_RoomRuntime.Room.Viewport0.CameraProperties.x, m_RoomRuntime.Room.Viewport0.CameraProperties.y);
-				m_RoomRuntime.camera.zoom = 1;
-			}
-
 			Fanty.[Friend]CurrentTime += Fanty.DeltaTime;
 			UpdateCurrentRoom();
 
@@ -46,10 +42,29 @@ public abstract class Application
 				nextFixedUpdate += (1.0f / GameOptions.TargetFixedStep);
 			}
 			FixedUpdateCurrentRoom();
+			for (var object in m_RoomRuntime.Room.GameObjects)
+			{
+				m_RoomRuntime.CurrentGameObject = &object;
+				// Use bounding box in the future.
+				if (object.x < 0 || object.x > m_RoomRuntime.Room.Width
+					|| object.y < 0 || object.y > m_RoomRuntime.Room.Height)
+				{
+					if (!object.[Friend]m_ExitedRoom)
+					{
+						object.[Friend]m_ExitedRoom = true;
+						object.OutsideRoomEvent();
+					}
+				}
+			}
+
+			if (m_RoomRuntime.Room.EnableViewports)
+			{
+				m_RoomRuntime.camera.target = .(m_RoomRuntime.Room.Viewport0.CameraProperties.x, m_RoomRuntime.Room.Viewport0.CameraProperties.y);
+				m_RoomRuntime.camera.zoom = 1;
+			}
 
 			Raylib.BeginDrawing();
 			{
-
 				if (m_RoomRuntime.Room.EnableViewports)
 					Raylib.BeginMode2D(m_RoomRuntime.camera);
 
@@ -59,6 +74,10 @@ public abstract class Application
 
 				if (m_RoomRuntime.Room.EnableViewports)
 					Raylib.EndMode2D();
+
+				// rlImGui.Begin();
+				// ImGui.ImGui.ShowDemoWindow();
+				// rlImGui.End();
 
 				/*
 				Raylib.DrawTexturePro(m_ScreenTexture.texture,
@@ -76,6 +95,7 @@ public abstract class Application
 			Raylib.EndDrawing();
 		}
 
+		rlImGui.Shutdown();
 		Exit();
 	}
 
@@ -90,7 +110,8 @@ public abstract class Application
 		m_RoomRuntime = new .();
 		m_RoomRuntime.Room = new Room();
 		m_RoomRuntime.Room.EnableViewports = true;
-		m_RoomRuntime.Room.BackgroundColor = Color("#00a7ff");
+		m_RoomRuntime.Room.BackgroundColor = Color("#00a6ff");
+		m_RoomRuntime.Room.Width *= 4;
 	}
 
 	private void Exit()

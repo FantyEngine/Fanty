@@ -1,3 +1,6 @@
 [submodule "vendor/bon"]
 	path = vendor/bon
 	url = https://github.com/EinScott/bon
+[submodule "vendor/imgui-beef"]
+	path = vendor/imgui-beef
+	url = https://github.com/RogueMacro/imgui-beef

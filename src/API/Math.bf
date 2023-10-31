@@ -2,6 +2,16 @@ namespace FantyEngine;
 
 extension Fanty
 {
+	public static float RandomRange(float minInclusive, float maxInclusive)
+	{
+		return (float)RandomInstance.NextDouble() * (maxInclusive - minInclusive) + minInclusive;
+	}
+
+	public static float RandomRange(int minInclusive, int maxInclusive)
+	{
+		return (int)RandomInstance.NextDouble() * (maxInclusive - minInclusive) + minInclusive;
+	}
+
 	/// Returns the angle between two points.
 	public static float PointDirection(float x1, float y1, float x2, float y2)
 	{

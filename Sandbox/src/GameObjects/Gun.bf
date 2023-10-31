@@ -27,23 +27,23 @@ public class Gun : GameObject
 			recoil = 4;
 			firingDelay = 5;
 
+			oCamera.ScreenShake(2, 10);
+
 			var bullet = Application.Instance.AddGameObject<Bullet>(new .());
 			bullet.x = x;
 			bullet.y = y;
 			bullet.speed = 25;
-			bullet.direction = ImageAngle;
+			bullet.direction = ImageAngle + Fanty.RandomRange(-3f, 3f);
+
+			var player = Player.Instance;
+			player.gunKickX = Fanty.LengthDirX(1.5f, ImageAngle - 180);
+			player.gunKickY = Fanty.LengthDirY(1, ImageAngle - 180);
 		}
 
 		x -= Fanty.LengthDirX(recoil, ImageAngle);
 		y -= Fanty.LengthDirY(recoil, ImageAngle);
 
-		if (ImageAngle > 90 && ImageAngle < 270)
-		{
-			ImageYScale = -1;
-		}
-		else
-		{
-			ImageYScale = 1;
-		}
+		var aimSide = Mathf.Sign(Fanty.MouseX - x);
+		if (aimSide != 0) ImageYScale = aimSide;
 	}
 }

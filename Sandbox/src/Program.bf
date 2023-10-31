@@ -11,11 +11,25 @@ class Program
 		game.AddGameObject<Player>(new .());
 
 		game.AddGameObject<Gun>(new .());
+		game.AddGameObject<Sandbox.oCamera>(new .());
+
 
 		for (var i < 8)
 		{
 			let wall = game.AddGameObject<Wall>(new .());
 			wall.x = i * 32;
+			wall.y = 32 * 8;
+		}
+		for (var i < 7)
+		{
+			let wall = game.AddGameObject<Wall>(new .());
+			wall.x = (32 * 8) + (i * 32);
+			wall.y = 32 * 9;
+		}
+		for (var i < 8)
+		{
+			let wall = game.AddGameObject<Wall>(new .());
+			wall.x = (32 * 15) + (i * 32);
 			wall.y = 32 * 8;
 		}
 		/*

@@ -49,8 +49,8 @@ public class GameObject
 	}
 
 	private Sprite* m_SpriteAsset;
-	/// The actual SpriteAsset attatched to the GameObject.
-	public Sprite SpriteAsset { get { return *m_SpriteAsset; } }
+	/// The actual SpriteAsset attached to the GameObject.
+	public Sprite SpriteAsset { get { if (m_SpriteAsset == null) return null; return *m_SpriteAsset; } }
 
 	private int m_ImageIndex = 0;
 	public int ImageIndex { get => m_ImageIndex; set { m_ImageIndex = value; } }
@@ -96,6 +96,8 @@ public class GameObject
 	public bool Visible;
 	public bool Solid;
 	public bool Persistent;
+
+	private bool m_ExitedRoom = false;
 
 	private CurrentSpriteProperties spriteProperties;
 

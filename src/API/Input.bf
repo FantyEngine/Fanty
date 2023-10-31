@@ -239,10 +239,20 @@ extension Fanty
 		=> RaylibBeef.Raylib.IsKeyReleased((int32)keycode);
 
 	/// X position of the Mouse Cursor within the current Room.
-	public static float MouseX => RaylibBeef.Raylib.GetMouseX();
+	public static float MouseX => MousePos.x;
 	/// Y position of the Mouse Cursor within the current Room.
-	public static float MouseY => RaylibBeef.Raylib.GetMouseY();
+	public static float MouseY => MousePos.y;
 
+	public static Vector2 MousePos
+	{
+		get
+		{
+			// temp
+			let pos = RaylibBeef.Raylib.GetScreenToWorld2D(RaylibBeef.Raylib.GetMousePosition(),
+				.(.(0, 0), .(GetCurrentRoom().Viewport0.CameraProperties.x, GetCurrentRoom().Viewport0.CameraProperties.y), 0, 1));
+			return .(pos.x, pos.y);
+		}
+	}
 	/// X position of the Mouse Cursor (in pixels) within the Game Window.
 	public static float WindowMouseX => RaylibBeef.Raylib.GetMouseX();
 	/// Y position of the Mouse Cursor (in pixels) within the Game Window.

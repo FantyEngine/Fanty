@@ -7,6 +7,9 @@ public class Player : GameObject
 {
 	public static Player Instance { get; private set; }
 
+	public float gunKickX;
+	public float gunKickY;
+
 	private float hsp = 0.0f;
 	private float vsp = 0.0f;
 	private float grv = 0.3f;
@@ -15,8 +18,7 @@ public class Player : GameObject
 	private bool onGround = false;
 	private bool wasOnGround = false;
 
-	private float coyoteTime = 0.13f;
-	private float coyoteTimeCounter = 0.0f;
+	private float canJump = 0.0f;
 
 	private bool keyLeft, keyRight, keyJump = false, keyJumpHeld = false;
 	private bool enableJump = false;
@@ -46,25 +48,18 @@ public class Player : GameObject
 
 		let move = (int)keyRight - (int)keyLeft;
 
-		hsp = move * (onGround ? walkSpd : walkSpd);
-		vsp += grv;
-
-		if (!onGround)
-		{
-			coyoteTimeCounter -= 1.0f / GameOptions.TargetFixedStep;
-		}
-		else
-		{
-			coyoteTimeCounter = coyoteTime;
-		}
+		hsp = (move * walkSpd) + gunKickX;
+		gunKickX = 0;
+		vsp += grv + gunKickY;
+		gunKickY = 0;
 
 		let jumpSpd = -7.0f;
-		if (coyoteTimeCounter > 0.0f && keyJump)
+		canJump -= 1;
+		if (canJump > 0 && keyJump)
 		{
-			vsp = jumpSpd;
-			coyoteTimeCounter = 0.0f;
+			vsp = -7.0f;
+			canJump = 0.0f;
 		}
-		
 		if (vsp < 0 && !keyJumpHeld)
 		{
 			vsp = Math.Max(vsp, jumpSpd * 0.5f);
@@ -92,10 +87,12 @@ public class Player : GameObject
 		x += hsp;
 		y += vsp;
 
-
 		wasOnGround = onGround;
 
 		// Animation
+		var aimSide = Mathf.Sign(Fanty.MouseX - x);
+		if (aimSide != 0) ImageXScale = aimSide;
+
 		if (!Fanty.PlaceMeeting<Wall>(x, y + 1))
 		{
 			SpriteIndex = "sPlayerA";
@@ -104,6 +101,7 @@ public class Player : GameObject
 		}
 		else
 		{
+			canJump = 10.0f;
 			ImageSpeed = 1;
 			if (hsp == 0)
 			{
@@ -111,13 +109,12 @@ public class Player : GameObject
 			}
 			else
 			{
-				SpriteIndex = "sPlayerR";
+				if (aimSide != Math.Sign(hsp))
+					SpriteIndex = "sPlayerRB";
+				else
+					SpriteIndex = "sPlayerR";
 			}
 		}
-
-
-		if (hsp != 0)
-			ImageXScale = Math.Sign(hsp);
 	}
 
 	public override void DrawEvent()

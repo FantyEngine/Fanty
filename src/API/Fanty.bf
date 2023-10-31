@@ -4,12 +4,14 @@ namespace FantyEngine;
 
 public static class Fanty
 {
-	private static Room GetCurrentRoom()
+	internal static Random RandomInstance = new .() ~ delete _;
+
+	internal static Room GetCurrentRoom()
 	{
 		return Application.Instance.[Friend]m_RoomRuntime.Room;
 	}
 
-	private static GameObject GetCurrentGameObject()
+	internal static GameObject GetCurrentGameObject()
 	{
 		return *Application.Instance.[Friend]m_RoomRuntime.CurrentGameObject;
 	}
