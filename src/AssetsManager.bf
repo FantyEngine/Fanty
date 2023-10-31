@@ -25,6 +25,8 @@ public class AssetsManager
 
 		var spriteIndex = 0;
 		var occupiedSize = Vector2Int();
+		var usedUpY = 0.0f;
+
 		for (var folder in allFolders)
 		{
 			if (folder.IsDirectory)
@@ -43,11 +45,17 @@ public class AssetsManager
 					{
 						let spritePath = scope $"{directoryPath}/{i}.png";
 						var src = RaylibBeef.Raylib.LoadImage(spritePath);
+
+						if (occupiedSize.x + src.width >= texturePage.width)
+						{
+							occupiedSize.x = 0;
+							occupiedSize.y += src.height;
+						}
 						RaylibBeef.Raylib.ImageDraw(&texturePage, src, .(0, 0, src.width, src.height), .(occupiedSize.x, occupiedSize.y, src.width, src.height), Color.white);
 
 						sprite.Size = .(src.width, src.height);
 						sprite.Frames[i].TexturePageCoordinates = .(occupiedSize.x, occupiedSize.y);
-						occupiedSize = .(occupiedSize.x + src.width, 0);
+						occupiedSize.x += src.width;
 
 						RaylibBeef.Raylib.UnloadImage(src);
 					}

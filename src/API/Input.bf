@@ -248,25 +248,56 @@ extension Fanty
 		get
 		{
 			// temp
-			let pos = RaylibBeef.Raylib.GetScreenToWorld2D(RaylibBeef.Raylib.GetMousePosition(),
+			let pos = RaylibBeef.Raylib.GetScreenToWorld2D(.(WindowMousePos.x, WindowMousePos.y),
 				.(.(0, 0), .(GetCurrentRoom().Viewport0.CameraProperties.x, GetCurrentRoom().Viewport0.CameraProperties.y), 0, 1));
 			return .(pos.x, pos.y);
 		}
 	}
 	/// X position of the Mouse Cursor (in pixels) within the Game Window.
-	public static float WindowMouseX => RaylibBeef.Raylib.GetMouseX();
+	public static float WindowMouseX => WindowMousePos.x;
 	/// Y position of the Mouse Cursor (in pixels) within the Game Window.
-	public static float WindowMouseY => RaylibBeef.Raylib.GetMouseY();
+	public static float WindowMouseY => WindowMousePos.y;
+
+	public static Vector2 WindowMousePos
+	{
+		get
+		{
+			let sc = Vector2(RaylibBeef.Raylib.GetMousePosition().x, RaylibBeef.Raylib.GetMousePosition().y);
+
+			var screenOffset = Vector2(WindowViewport.x, WindowViewport.y);
+			var a = Vector2(sc.x - screenOffset.x, sc.y - screenOffset.y);
+
+			return a;
+		}
+	}
 
 	public static bool IsMouseButtonDown(int button)
-		=> RaylibBeef.Raylib.IsMouseButtonDown((int32)button);
+	{
+		var a = RaylibBeef.Raylib.IsMouseButtonDown((int32)button);
+		if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)button))
+			clickedMouseInViewport = MouseInViewport();
+
+		return a && clickedMouseInViewport;
+	}
 
 	public static bool IsMouseButtonUp(int button)
-		=> RaylibBeef.Raylib.IsMouseButtonUp((int32)button);
+		=> clickedMouseInViewport && RaylibBeef.Raylib.IsMouseButtonUp((int32)button);
 
 	public static bool IsMouseButtonPressed(int button)
-		=> RaylibBeef.Raylib.IsMouseButtonPressed((int32)button);
+	{
+		var a = RaylibBeef.Raylib.IsMouseButtonPressed((int32)button);
+		return MouseInViewport() && a;
+	} 
 
 	public static bool IsMouseButtonReleased(int button)
-		=> RaylibBeef.Raylib.IsMouseButtonReleased((int32)button);
+	{
+		var a = MouseInViewport() && RaylibBeef.Raylib.IsMouseButtonReleased((int32)button);
+		clickedMouseInViewport = false;
+		return a;
+	}
+
+	private static bool clickedMouseInViewport = false;
+
+	internal static Rectangle WindowViewport = .();
+	internal static bool MouseInViewport() => (WindowMousePos.x >= 0 && WindowMousePos.x <= WindowViewport.width) && (WindowMousePos.y >= 0 && WindowMousePos.y <= WindowViewport.height);
 }

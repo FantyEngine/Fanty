@@ -33,7 +33,7 @@ public class Player : GameObject
 		CollisionMaskSameAsSprite = false;
 		CollisionMaskAsset = new $"sPlayer";
 
-		x = 32;
+		x = 288;
 		y = 32;
 	}
 

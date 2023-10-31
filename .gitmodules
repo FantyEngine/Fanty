@@ -4,3 +4,6 @@
 [submodule "vendor/imgui-beef"]
 	path = vendor/imgui-beef
 	url = https://github.com/RogueMacro/imgui-beef
+[submodule "Helper/FantyHelper/vendor/rlImGui"]
+	path = Helper/FantyHelper/vendor/rlImGui
+	url = https://github.com/raylib-extras/rlImGui

@@ -8,6 +8,7 @@ class Program
 	public static int Main(String[] args)
 	{
 		let game = scope Game("Sandbox");
+		game.AddInstanceLayer();
 		game.AddGameObject<Player>(new .());
 
 		game.AddGameObject<Gun>(new .());

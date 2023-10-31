@@ -18,7 +18,8 @@ extension Fanty
 			(x - original.xOrigin) + collisionMask.x + collisionMask.width,
 			(y - original.yOrigin) + collisionMask.y + collisionMask.height);
 
-		for (let obj in room.GameObjects)
+		for (let layer in room.InstanceLayers)
+		for (let obj in layer.value.GameObjects)
 		{
 			if (obj.GetType() == typeof(T))
 			{

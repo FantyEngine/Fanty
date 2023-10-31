@@ -1,14 +1,15 @@
 using System.Collections;
+using System;
 
 namespace FantyEngine;
 
 public class Room
 {
-	/// !! NOTE: Make it harder to modify without proper functions.
-	public List<GameObject> GameObjects = new .() ~ DeleteContainerAndItems!(_);
-
 	public int Width = 1024;
 	public int Height = 768;
+
+	public Dictionary<Guid, InstanceLayer> InstanceLayers = new .() ~ DeleteDictionaryAndValues!(_);
+	public Dictionary<Guid, BackgroundLayer> BackgroundLayers = new .() ~ DeleteDictionaryAndValues!(_);
 
 	public Color BackgroundColor = Color(84, 84, 84, 255);
 
@@ -27,5 +28,32 @@ public class Room
 			this.CameraProperties = cameraProperties;
 			this.ViewportProperties = viewportProperties;
 		}
+	}
+
+	public class Layer
+	{
+		public String Name = new .() ~ if (Name != null) delete _;
+	}
+
+	public class InstanceLayer : Layer
+	{
+		public List<GameObject> GameObjects = new .() ~
+			DeleteContainerAndItems!(_);
+	}
+
+	public class BackgroundLayer : Layer
+	{
+		public Color Color = .white;
+		public bool HorizontalTile = false;
+		public bool VerticalTile = false;
+		public bool Stretch = false;
+		public Vector2 Offset = .zero;
+		public Vector2 Speed = .zero;
+	}
+
+	public enum LayerType
+	{
+		Instance,
+		Background
 	}
 }

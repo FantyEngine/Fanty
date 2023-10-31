@@ -1034,7 +1034,7 @@ public static class Raylib
 	public static extern Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2);
 	
 	/// Load image from file into CPU memory (RAM)
-	[CLink]
+	[LinkName("LoadImageRL")]
 	public static extern Image LoadImage(char8 * fileName);
 	
 	/// Load image from RAW file data

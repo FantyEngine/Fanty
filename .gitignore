@@ -1,5 +1,20 @@
+# Beef
 build
 BeefSpace_User.toml
 dist
 recovery
 *.zip
+
+# Binaries
+**/bin/
+bin-int/
+Intermediates/
+TrinkitBeef/dist/
+
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+**.csproj

@@ -3,6 +3,8 @@ namespace FantyEngine;
 
 public class GameObject
 {
+	private Guid m_InstanceLayerID;
+
 	private float m_internalX;
 	private float m_InternalY;
 
@@ -109,8 +111,9 @@ public class GameObject
 
 	public void Destroy(GameObject gameObject)
 	{
+		var layer = Application.Instance.GetInstanceLayer(gameObject.m_InstanceLayerID);
+		layer.GameObjects.Remove(gameObject);
 		delete gameObject;
-		Fanty.[Friend]GetCurrentRoom().GameObjects.Remove(gameObject);
 	}
 
 	public virtual void CreateEvent(){}
@@ -131,7 +134,7 @@ public class GameObject
 		{
 			if (SpriteAsset.Frames.Count > 1 && ImageSpeed > 0.0f)
 			{
-				spriteProperties.Clock += Fanty.DeltaTime;
+				spriteProperties.Clock += 1.0f / GameOptions.TargetFixedStep;
 				var currentFrame = spriteProperties.Frame % SpriteAsset.Frames.Count;
 				var secondsPerFrame = ((float)SpriteAsset.Frames[currentFrame].Length / SpriteAsset.FPS) * ImageSpeed;
 				while (spriteProperties.Clock >= secondsPerFrame)

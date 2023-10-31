@@ -1,0 +1,21 @@
+{
+        FPS = 12,
+        Frames = [
+                {
+                        TextureRegion = {
+                                width = 640,
+                                height = 500
+                        },
+                        Length = 1
+                }
+        ],
+        CollisionMask = {
+                Rect = {
+						x = 0,
+						y = 0,
+                        width = 0,
+                        height = 0
+                }
+        },
+		Origin = { x = 24, y = 24 }
+}

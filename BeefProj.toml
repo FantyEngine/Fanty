@@ -7,7 +7,8 @@ TargetType = "BeefLib"
 StartupObject = "FantyEngine.Program"
 
 [Configs.Debug.Win64]
-LibPaths = ["$(ProjectDir)\\libs\\libs_x64\\raylibdll.lib"]
+OtherLinkFlags = "$(LinkFlags) gdi32.lib user32.lib kernel32.lib shell32.lib"
+LibPaths = ["$(ProjectDir)\\libs\\libs_x64\\FantyHelper.lib"]
 PostBuildCmds = ["CopyToDependents(\"$(ProjectDir)/libs/libs_x64/*.dll\")"]
 
 [Configs.Release.Win64]

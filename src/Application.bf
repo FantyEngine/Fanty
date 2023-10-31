@@ -6,12 +6,11 @@ namespace FantyEngine;
 public abstract class Application
 {
 	public static Application Instance { get; private set; }
+	public RenderTexture2D ScreenBuffer { get; private set; }
 
 	private String m_WindowTitle ~ delete _;
-
 	private RoomRuntime m_RoomRuntime = null;
-
-	private float nextFixedUpdate = 0.0f;
+	private float m_NextFixedUpdate = 0.0f;
 
 	private class RoomRuntime
 	{
@@ -26,8 +25,6 @@ public abstract class Application
 
 		m_WindowTitle = new String(title);
 		Init();
-
-		rlImGui.Setup(true);
 	}
 
 	public void Run()
@@ -35,14 +32,22 @@ public abstract class Application
 		while (!Raylib.WindowShouldClose())
 		{
 			Fanty.[Friend]CurrentTime += Fanty.DeltaTime;
-			UpdateCurrentRoom();
 
-			if (Fanty.CurrentTime > nextFixedUpdate)
+			var updateFixedUpdate = false;
+			if (Fanty.CurrentTime > m_NextFixedUpdate)
 			{
-				nextFixedUpdate += (1.0f / GameOptions.TargetFixedStep);
+				updateFixedUpdate = true;
+				m_NextFixedUpdate += (1.0f / GameOptions.TargetFixedStep);
+				Console.WriteLine(Fanty.CurrentTime);
 			}
-			FixedUpdateCurrentRoom();
-			for (var object in m_RoomRuntime.Room.GameObjects)
+
+			if (updateFixedUpdate)
+			{
+				UpdateCurrentRoom();
+				FixedUpdateCurrentRoom();
+			}
+			for (var layer in m_RoomRuntime.Room.InstanceLayers)
+			for (var object in layer.value.GameObjects)
 			{
 				m_RoomRuntime.CurrentGameObject = &object;
 				// Use bounding box in the future.
@@ -65,19 +70,24 @@ public abstract class Application
 
 			Raylib.BeginDrawing();
 			{
-				if (m_RoomRuntime.Room.EnableViewports)
-					Raylib.BeginMode2D(m_RoomRuntime.camera);
+				Raylib.ClearBackground(FantyEngine.Color.darkGray);
 
-				PreDrawCurrentRoom();
-				DrawCurrentRoom();
-				PostDrawCurrentRoom();
+				if (updateFixedUpdate)
+				{
+					Raylib.BeginTextureMode(ScreenBuffer);
 
-				if (m_RoomRuntime.Room.EnableViewports)
-					Raylib.EndMode2D();
+					if (m_RoomRuntime.Room.EnableViewports)
+						Raylib.BeginMode2D(m_RoomRuntime.camera);
 
-				// rlImGui.Begin();
-				// ImGui.ImGui.ShowDemoWindow();
-				// rlImGui.End();
+					PreDrawCurrentRoom();
+					DrawCurrentRoom();
+					PostDrawCurrentRoom();
+
+					if (m_RoomRuntime.Room.EnableViewports)
+						Raylib.EndMode2D();
+
+					Raylib.EndTextureMode();
+				}
 
 				/*
 				Raylib.DrawTexturePro(m_ScreenTexture.texture,
@@ -88,22 +98,31 @@ public abstract class Application
 					FantyEngine.Color.white);
 				*/
 
-				Raylib.DrawTexture(AssetsManager.MainTexturePage, 360, 0, FantyEngine.Color.white);
+				Raylib.Fanty_ImGuiBegin(Raylib.GetWindowGlfw(), Raylib.GetFrameTime());
+				EditorUI.Draw();
+				Raylib.Fanty_ImGuiEnd(Raylib.GetWindowGlfw());
 
 				Raylib.DrawFPS(20, 20);
 			}
 			Raylib.EndDrawing();
+
 		}
 
-		rlImGui.Shutdown();
+		// rlImGui.rlImGuiShutdown();
 		Exit();
 	}
 
 	private void Init()
 	{
-		Raylib.InitWindow(1024, 768, m_WindowTitle);
+		Raylib.SetConfigFlags((int32)ConfigFlags.FLAG_WINDOW_RESIZABLE);
+		Raylib.InitWindow(1600, 900, m_WindowTitle);
 		Raylib.InitAudioDevice();
 		Raylib.SetTargetFPS((int32)GameOptions.TargetFixedStep);
+
+		ScreenBuffer = Raylib.LoadRenderTexture(1024, 768);
+
+		// rlImGui.rlImGuiSetup();
+		Raylib.Fanty_SetupImGui(Raylib.GetWindowGlfw(), "", "");
 
 		AssetsManager.[Friend]LoadAllAssets();
 
@@ -116,6 +135,8 @@ public abstract class Application
 
 	private void Exit()
 	{
+		Raylib.UnloadRenderTexture(ScreenBuffer);
+
 		if (m_RoomRuntime != null)
 		{
 			UnloadCurrentRoom();
@@ -128,17 +149,20 @@ public abstract class Application
 
 	private void UpdateCurrentRoom()
 	{
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.BeginStepEvent();
 		}
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.StepEvent();
 		}
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.EndStepEvent();
@@ -147,7 +171,8 @@ public abstract class Application
 
 	private void FixedUpdateCurrentRoom()
 	{
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.FixedStepEvent();
@@ -156,7 +181,8 @@ public abstract class Application
 	
 	private void PreDrawCurrentRoom()
 	{
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.PreDrawEvent();
@@ -167,17 +193,20 @@ public abstract class Application
 	{
 		Fanty.DrawClear(m_RoomRuntime.Room.BackgroundColor);
 
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.DrawBeginEvent();
 		}
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.DrawEvent();
 		}
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.DrawEndEvent();
@@ -186,7 +215,8 @@ public abstract class Application
 
 	private void PostDrawCurrentRoom()
 	{
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.PostDrawEvent();
@@ -195,7 +225,8 @@ public abstract class Application
 
 	private void UnloadCurrentRoom()
 	{
-		for (var object in m_RoomRuntime.Room.GameObjects)
+		for (let layer in m_RoomRuntime.Room.InstanceLayers)
+		for (var object in layer.value.GameObjects)
 		{
 			m_RoomRuntime.CurrentGameObject = &object;
 			object.DestroyEvent();
@@ -204,9 +235,32 @@ public abstract class Application
 
 	public T AddGameObject<T>(T item) where T : GameObject
 	{
-		m_RoomRuntime.Room.GameObjects.Add(item);
+		var instanceLayerKey = Guid.Empty;
+
+		var i = 0;
+		for (var key in m_RoomRuntime.Room.InstanceLayers.Keys)
+		{
+			instanceLayerKey = key;
+			break;
+		}
+
+		let instanceLayer = m_RoomRuntime.Room.InstanceLayers[instanceLayerKey];
+		instanceLayer.GameObjects.Add(item);
+		item.[Friend]m_InstanceLayerID = instanceLayerKey;
 		item.CreateEvent();
 
 		return item;
+	}
+
+	public Room.InstanceLayer AddInstanceLayer()
+	{
+		var il = new Room.InstanceLayer();
+		m_RoomRuntime.Room.InstanceLayers.Add(Guid.Create(), il);
+		return il;
+	}
+
+	public Room.InstanceLayer GetInstanceLayer(Guid guid)
+	{
+		return m_RoomRuntime.Room.InstanceLayers[guid];
 	}
 }
