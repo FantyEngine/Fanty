@@ -14,18 +14,25 @@ public class AssetsManager
 	public static Dictionary<String, Sprite> Sprites = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
 	public static RaylibBeef.Texture2D MainTexturePage { get; private set; } ~ if (_.id > 0) RaylibBeef.Raylib.UnloadTexture(_);
 
-	internal static void LoadAllAssets()
+	public static void LoadAllAssets()
 	{
+		if (MainTexturePage.id > 0)
+		{
+			RaylibBeef.Raylib.UnloadTexture(MainTexturePage);
+
+			DeleteDictionaryAndKeysAndValues!(Sprites);
+			Sprites = new .();
+		}
+
 		gBonEnv.serializeFlags |= .Verbose;
 
 
 		let spritesFolder = AssetsPath + "/sprites";
 		let allFolders = Directory.EnumerateDirectories(spritesFolder);
-		var texturePage = RaylibBeef.Raylib.GenImageColor(1024, 1024, Color(255, 0, 255, 0));
+		var texturePage = RaylibBeef.Raylib.GenImageColor(1024 * 2, 1024 * 2, Color(255, 0, 255, 0));
 
 		var spriteIndex = 0;
-		var occupiedSize = Vector2Int();
-		var usedUpY = 0.0f;
+		var currentPixel = Vector2Int();
 
 		for (var folder in allFolders)
 		{
@@ -46,16 +53,19 @@ public class AssetsManager
 						let spritePath = scope $"{directoryPath}/{i}.png";
 						var src = RaylibBeef.Raylib.LoadImage(spritePath);
 
-						if (occupiedSize.x + src.width >= texturePage.width)
+						if (currentPixel.x + src.width > texturePage.width)
 						{
-							occupiedSize.x = 0;
-							occupiedSize.y += src.height;
+							currentPixel.x = 0;
+							currentPixel.y += src.height;
 						}
-						RaylibBeef.Raylib.ImageDraw(&texturePage, src, .(0, 0, src.width, src.height), .(occupiedSize.x, occupiedSize.y, src.width, src.height), Color.white);
+
+						RaylibBeef.Raylib.ImageDraw(&texturePage, src, .(0, 0, src.width, src.height), .(currentPixel.x, currentPixel.y, src.width, src.height), Color.white);
 
 						sprite.Size = .(src.width, src.height);
-						sprite.Frames[i].TexturePageCoordinates = .(occupiedSize.x, occupiedSize.y);
-						occupiedSize.x += src.width;
+						sprite.Frames[i].TexturePageCoordinates = .(currentPixel.x, currentPixel.y);
+
+						// occupiedSize.x += src.width;
+						currentPixel.x += src.width;
 
 						RaylibBeef.Raylib.UnloadImage(src);
 					}

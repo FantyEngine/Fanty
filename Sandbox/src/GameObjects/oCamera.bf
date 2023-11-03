@@ -46,10 +46,15 @@ public class oCamera : GameObject
 
 		// Screen shake
 		x += Fanty.RandomRange(-shakeRemain, shakeRemain);
-		y += Fanty.RandomRange(-shakeRemain, shakeRemain);
+		// y += Fanty.RandomRange(-shakeRemain, shakeRemain);
 		shakeRemain = Mathf.Max(0, shakeRemain - ((1 / shakeLength) * shakeMagnitude));
 
-		Fanty.CameraSetViewPos(cam, x - viewWHalf, y - viewHHalf);
+		Fanty.CameraSetViewPos(cam, x - viewWHalf, 0);
+
+		Fanty.LayerSetX(Program.mountainsLayer, (x / 2) - (viewWHalf));
+		Fanty.LayerSetY(Program.mountainsLayer, 49);
+		Fanty.LayerSetX(Program.treesLayer, (x / 4) - (viewWHalf));
+		Fanty.LayerSetY(Program.treesLayer, 148);
 	}
 
 	public static void ScreenShake(float magnitude, int frames)

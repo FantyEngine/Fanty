@@ -3,7 +3,8 @@ namespace FantyEngine;
 
 public class GameObject
 {
-	private Guid m_InstanceLayerID;
+	public Guid InstanceLayerID { get; private set; }
+	public Guid GameObjectID { get; private set; }
 
 	private float m_internalX;
 	private float m_InternalY;
@@ -53,6 +54,11 @@ public class GameObject
 	private Sprite* m_SpriteAsset;
 	/// The actual SpriteAsset attached to the GameObject.
 	public Sprite SpriteAsset { get { if (m_SpriteAsset == null) return null; return *m_SpriteAsset; } }
+
+	public bool HasSprite()
+	{
+		return SpriteAsset != null;
+	}
 
 	private int m_ImageIndex = 0;
 	public int ImageIndex { get => m_ImageIndex; set { m_ImageIndex = value; } }
@@ -111,8 +117,8 @@ public class GameObject
 
 	public void Destroy(GameObject gameObject)
 	{
-		var layer = Application.Instance.GetInstanceLayer(gameObject.m_InstanceLayerID);
-		layer.GameObjects.Remove(gameObject);
+		var layer = Application.Instance.GetInstanceLayer(gameObject.InstanceLayerID);
+		layer.GameObjects.Remove(gameObject.GameObjectID);
 		delete gameObject;
 	}
 

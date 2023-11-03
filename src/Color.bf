@@ -1,9 +1,11 @@
 using System;
+using Bon;
 
 namespace FantyEngine;
 
 public typealias byte = uint8;
 
+[BonTarget]
 public struct Color
 {
 	/// Red component of the color.

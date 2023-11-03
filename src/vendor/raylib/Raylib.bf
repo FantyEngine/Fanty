@@ -1490,7 +1490,7 @@ public static class Raylib
 	public static extern void DrawFPS(int32 posX, int32 posY);
 	
 	/// Draw text (using default font)
-	[CLink]
+	[LinkName("DrawTextRL")]
 	public static extern void DrawText(char8 * text, int32 posX, int32 posY, int32 fontSize, Color color);
 	
 	/// Draw text using font and additional parameters

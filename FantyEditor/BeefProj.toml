@@ -1,0 +1,6 @@
+FileVersion = 1
+Dependencies = {corlib = "*", FantyEngine = "*", Sandbox = "*"}
+
+[Project]
+Name = "FantyEditor"
+StartupObject = "FantyEditor.Program"

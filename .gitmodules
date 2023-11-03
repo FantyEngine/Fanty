@@ -7,3 +7,6 @@
 [submodule "Helper/FantyHelper/vendor/rlImGui"]
 	path = Helper/FantyHelper/vendor/rlImGui
 	url = https://github.com/raylib-extras/rlImGui
+[submodule "vendor/glfw-beef"]
+	path = vendor/glfw-beef
+	url = https://github.com/MineGame159/glfw-beef

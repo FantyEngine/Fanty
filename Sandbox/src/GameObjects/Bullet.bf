@@ -1,11 +1,16 @@
 using FantyEngine;
+using static FantyEngine.Fanty;
 
 namespace Sandbox;
 
+[RegisterGameObject("oBullet")]
 public class Bullet : GameObject
 {
-	public float speed;
+	public static float Tesss;
+
+	public float speed = 10.0f;
 	public float direction;
+	public float asdsasdasdsd = 12.0f;
 
 	public override void CreateEvent()
 	{
@@ -14,15 +19,15 @@ public class Bullet : GameObject
 
 	public override void StepEvent()
 	{
-		x += Fanty.LengthDirX(speed, direction);
-		y += Fanty.LengthDirY(speed, direction);
+		x += LengthDirX(speed, direction);
+		y += LengthDirY(speed, direction);
 
 		ImageAngle = direction;
 	}
 
 	public override void PostDrawEvent()
 	{
-		if (Fanty.PlaceMeeting<Wall>(x, y))
+		if (PlaceMeeting<Wall>(x, y))
 			Destroy(this);
 	}
 
