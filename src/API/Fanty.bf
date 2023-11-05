@@ -6,13 +6,16 @@ public static class Fanty
 {
 	internal static Random RandomInstance = new .() ~ delete _;
 
-	internal static Room GetCurrentRoom()
+
+	internal static FantyEngine.RoomInstance GetCurrentRoom()
 	{
-		return Application.Instance.[Friend]m_RoomRuntime.Room;
+		return null;
+		// return Application.Instance.[Friend]m_RoomRuntime.Room;
 	}
 
-	internal static GameObject GetCurrentGameObject()
+	internal static FantyEngine.GameObjectInstance GetCurrentGameObject()
 	{
-		return *Application.Instance.[Friend]m_RoomRuntime.CurrentGameObject;
+		return null;
+		// return *Application.Instance.[Friend]m_RoomRuntime.CurrentGameObject;
 	}
 }

@@ -1,3 +1,4 @@
+/*
 using FantyEngine;
 
 namespace Sandbox;
@@ -69,3 +70,4 @@ public class oCamera : GameObject
 		}
 	}
 }
+*/

@@ -16,6 +16,16 @@ public static class MainEditor
 
 	public static void Init()
 	{
+		gBonEnv.serializeFlags |= .Verbose | .IncludeDefault;
+
+		var goa = scope FantyEngine.GameObjectAsset();
+		goa.SetName("oWall");
+		goa.SetSpriteAssetName("sSolidWall");
+
+		File.WriteAllText(scope $"{FantyEngine.AssetsManager.AssetsPath}/objects/oWall.object", Bon.Serialize(goa, .. scope .()));
+
+		FantyEngine.AssetsManager.LoadAllAssets();
+
 		m_BG_Image = Raylib.LoadTexture(@"C:\Program Files\GameMaker\GUI\Skins\Dark\Images\Background\BG_Image.png");
 		m_BG_Texture = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
@@ -40,6 +50,10 @@ public static class MainEditor
 		}
 
 		RoomEditor.Init();
+		Toolbar.Init();
+		RaylibBeef.Raylib.Fanty_ImGuiPellyTheme();
+		// Themes.Default();
+
 	}
 
 	private static mixin Encapsulate(ref Variant val, out Object obj)
@@ -64,6 +78,7 @@ public static class MainEditor
 	public static void Deinit()
 	{
 		RoomEditor.Deinit();
+		Toolbar.Deinit();
 
 		Raylib.UnloadRenderTexture(m_BG_Texture);
 		Raylib.UnloadTexture(m_BG_Image);
@@ -86,12 +101,15 @@ public static class MainEditor
 
 	public static void Gui()
 	{
+
 		// Background();
 
 		Dockspace();
 		Toolbar.Gui();
 		AssetBrowser.Gui();
 		RoomEditor.Gui();
+
+		ImGui.ShowDemoWindow();
 	}
 
 	private static void Dockspace()
@@ -99,14 +117,14 @@ public static class MainEditor
 	    ImGui.PushStyleColor(ImGui.Col.WindowBg, 0);
 
 	    let viewport = ImGui.GetMainViewport();
-	    ImGui.SetNextWindowPos(.(viewport.Pos.x, viewport.Pos.y + 61), ImGui.Cond.Always);
-	    ImGui.SetNextWindowSize(.(viewport.Size.x, viewport.Size.y - 61));
+	    ImGui.SetNextWindowPos(.(viewport.Pos.x, viewport.Pos.y + 62 + 2), ImGui.Cond.Always);
+	    ImGui.SetNextWindowSize(.(viewport.Size.x, viewport.Size.y - 62 - 2));
 	    ImGui.SetNextWindowViewport(viewport.ID);
 
 	    ImGui.PushStyleVar(ImGui.StyleVar.WindowPadding, .(0, 0));
 	    ImGui.PushStyleVar(ImGui.StyleVar.WindowRounding, 0.0f);
 	    ImGui.PushStyleVar(ImGui.StyleVar.WindowBorderSize, 0.0f);
-	    let windowFlags = ImGui.WindowFlags.NoResize | .NoMove | .NoBringToFrontOnFocus | .NoNavFocus | .NoTitleBar | .NoBackground | .NoDecoration;
+	    let windowFlags = ImGui.WindowFlags.NoResize | .NoMove | .NoBringToFrontOnFocus | .NoNavFocus | .NoTitleBar | .NoBackground | .NoDecoration | .MenuBar;
 	    ImGui.Begin("MainDockspaceWindow", null, windowFlags);
 		{
 			var windowPos = ImGui.GetWindowPos();

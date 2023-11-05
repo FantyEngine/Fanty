@@ -1,0 +1,9 @@
+{
+	Name = "oWall",
+	SpriteAssetName = "sSolidWall",
+	CollisionMaskAsset = null,
+	CollisionMaskSameAsSprite = true,
+	Visible = false,
+	Persistent = false,
+	Solid = false
+}

@@ -17,7 +17,7 @@ class Program
 
 		MainEditor.Init();
 
-		while (!Raylib.WindowShouldClose())
+		void Update()
 		{
 			Raylib.BeginDrawing();
 			Raylib.ClearBackground(FantyEngine.Color.black);
@@ -31,7 +31,16 @@ class Program
 			Raylib.Fanty_ImGuiEnd(Raylib.GetWindowGlfw());
 
 			Raylib.EndDrawing();
+		}
 
+		GLFW.Glfw.SetWindowSizeCallback((GLFW.GlfwWindow*)Raylib.GetWindowGlfw(), new (window, width, height) => {
+			Raylib.CallWindowResize(window, (int32)width, (int32)height);
+			Update();
+		});
+
+		while (!Raylib.WindowShouldClose())
+		{
+			Update();
 		}
 
 		MainEditor.Deinit();

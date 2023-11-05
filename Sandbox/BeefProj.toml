@@ -3,4 +3,5 @@ Dependencies = {corlib = "*", FantyEngine = "*"}
 
 [Project]
 Name = "Sandbox"
+TargetType = "BeefLib"
 StartupObject = "Sandbox.Program"

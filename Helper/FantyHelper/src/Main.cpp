@@ -44,11 +44,6 @@ extern "C"
 
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 130");
-
-		// ImFontConfig config;
-		// auto f = io.Fonts->AddFontFromFileTTF("C:\\Users\\Braedon\\Downloads\\JetBrainsMono-Regular.ttf", 18, &config);
-
-		// return f;
 	}
 
 	FANTY_API void Fanty_ImGuiBegin(GLFWwindow* window, float deltaTime)
@@ -72,5 +67,57 @@ extern "C"
 			ImGui::RenderPlatformWindowsDefault(NULL, NULL);
 			glfwMakeContextCurrent(backup_current_window);
 		}
+	}
+
+	FANTY_API void Fanty_ImGuiPellyTheme(ImGuiStyle* dst)
+	{
+		ImGuiStyle* style = dst ? dst : &ImGui::GetStyle();
+		style->AntiAliasedLinesUseTex = false;
+
+		style->FramePadding.x = 4;
+		style->FramePadding.y = 2;
+		style->ItemSpacing.x = 10;
+		style->ItemSpacing.y = 3;
+		style->WindowPadding.x = 8;
+		style->WindowRounding = 2;
+		style->WindowBorderSize = 1;
+		style->FrameBorderSize = 0;
+		style->FrameRounding = 2;
+		style->ScrollbarRounding = 2;
+		style->ChildRounding = 4;
+		style->PopupRounding = 4;
+		style->GrabRounding = 2.0f;
+		style->TabRounding = 2;
+		style->ScrollbarSize = 16;
+
+		style->Colors[ImGuiCol_WindowBg]			= ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		style->Colors[ImGuiCol_Border]				= ImVec4(0.10f, 0.10f, 0.10f, 0.85f);
+		style->Colors[ImGuiCol_BorderShadow]		= ImVec4(0.10f, 0.10f, 0.10f, 0.35f);
+		style->Colors[ImGuiCol_FrameBg]				= ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+		style->Colors[ImGuiCol_FrameBgHovered]		= ImVec4(0.15f, 0.15f, 0.15f, 0.78f);
+		style->Colors[ImGuiCol_FrameBgActive]		= ImVec4(0.15f, 0.15f, 0.15f, 0.67f);
+		style->Colors[ImGuiCol_TitleBg]				= ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+		style->Colors[ImGuiCol_TitleBgActive]		= ImVec4(0.13f, 0.13f, 0.13f, 1.00f);
+		style->Colors[ImGuiCol_MenuBarBg]			= ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		style->Colors[ImGuiCol_CheckMark]			= ImVec4(0.69f, 0.69f, 0.69f, 1.00f);
+		style->Colors[ImGuiCol_Button]				= ImVec4(0.28f, 0.28f, 0.28f, 1.00f);
+		style->Colors[ImGuiCol_ButtonHovered]		= ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+		style->Colors[ImGuiCol_ButtonActive]		= ImVec4(0.16f, 0.44f, 0.75f, 1.00f);
+		style->Colors[ImGuiCol_Header]				= ImVec4(0.16f, 0.44f, 0.75f, 1.00f);
+		style->Colors[ImGuiCol_HeaderHovered]		= ImVec4(0.20f, 0.48f, 0.88f, 1.00f);
+		style->Colors[ImGuiCol_HeaderActive]		= ImVec4(0.16f, 0.44f, 0.75f, 1.00f);
+		style->Colors[ImGuiCol_Separator]			= ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+		style->Colors[ImGuiCol_SeparatorActive]		= ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+		style->Colors[ImGuiCol_Tab]					= ImVec4(0.16f, 0.16f, 0.16f, 1.00f);
+		style->Colors[ImGuiCol_TabHovered]			= ImVec4(0.19f, 0.48f, 0.88f, 0.80f);
+		style->Colors[ImGuiCol_TabActive]			= ImVec4(0.16f, 0.44f, 0.75f, 1.00f);
+		style->Colors[ImGuiCol_TabUnfocused]		= ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		style->Colors[ImGuiCol_TabUnfocusedActive]	= ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		style->Colors[ImGuiCol_ChildBg]				= ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		style->Colors[ImGuiCol_PopupBg]				= ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		style->Colors[ImGuiCol_TitleBg]				= ImVec4(0.13f, 0.13f, 0.13f, 1.00f);
+		style->Colors[ImGuiCol_TitleBgCollapsed]	= ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+		style->Colors[ImGuiCol_ScrollbarBg]			= ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+		style->Colors[ImGuiCol_ModalWindowDimBg]	= ImVec4(0.00f, 0.00f, 0.00f, 0.35f);
 	}
 }

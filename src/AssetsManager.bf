@@ -11,10 +11,53 @@ public class AssetsManager
 	// Temp
 	public const String AssetsPath = @"D:/Fanty/Sandbox/project";
 
-	public static Dictionary<String, Sprite> Sprites = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
+	// Replace Strings with Guids in the future.
+	public static Dictionary<String, GameObjectAsset> GameObjectAssets = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
+	public static Dictionary<String, SpriteAsset> Sprites = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
+	public static Dictionary<String, RoomAsset> Rooms = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
+
 	public static RaylibBeef.Texture2D MainTexturePage { get; private set; } ~ if (_.id > 0) RaylibBeef.Raylib.UnloadTexture(_);
 
 	public static void LoadAllAssets()
+	{
+		LoadAllGameObjects();
+		LoadAllSprites();
+	}
+
+	private static void LoadAllGameObjects()
+	{
+		let objectsFolder = AssetsPath + "/objects";
+		let allFiles = Directory.EnumerateFiles(objectsFolder);
+		for (var file in allFiles)
+		{
+			var exten = scope String();
+			var path = file.GetFilePath(.. scope .());
+			Path.GetExtension(path, exten);
+			if (exten == ".object")
+			{
+				var object = new FantyEngine.GameObjectAsset();
+				var dataFile = scope String();
+
+				var name = Path.GetFileNameWithoutExtension(path, .. new .());
+
+				if (File.ReadAllText(path, dataFile) == .Ok)
+				{
+					Result<GameObjectAsset> Load()
+					{
+						Bon.Deserialize(ref object, dataFile);
+						return object;
+					}
+
+					if (Load() != .Err)
+					{
+						GameObjectAssets.Add(name, object);
+					}
+				}
+			}
+		}
+	}
+
+	private static void LoadAllSprites()
 	{
 		if (MainTexturePage.id > 0)
 		{
@@ -23,9 +66,6 @@ public class AssetsManager
 			DeleteDictionaryAndKeysAndValues!(Sprites);
 			Sprites = new .();
 		}
-
-		gBonEnv.serializeFlags |= .Verbose;
-
 
 		let spritesFolder = AssetsPath + "/sprites";
 		let allFolders = Directory.EnumerateDirectories(spritesFolder);
@@ -43,36 +83,38 @@ public class AssetsManager
 
 				if (File.ReadAllText(scope $"{directoryPath}/data.bon", dataFile) == .Ok)
 				{
-					Console.WriteLine(dataFile);
+					var sprite = new SpriteAsset();
 
-					var sprite = new Sprite();
-					Bon.Deserialize(ref sprite, dataFile);
-
-					for (var i < sprite.Frames.Count)
+					Result<SpriteAsset> LoadSprite()
 					{
-						let spritePath = scope $"{directoryPath}/{i}.png";
-						var src = RaylibBeef.Raylib.LoadImage(spritePath);
-
-						if (currentPixel.x + src.width > texturePage.width)
+						Try!(Bon.Deserialize(ref sprite, dataFile));
+						return sprite;
+					}
+					if (LoadSprite() != .Err)
+					{
+						for (var i < sprite.Frames.Count)
 						{
-							currentPixel.x = 0;
-							currentPixel.y += src.height;
+							let spritePath = scope $"{directoryPath}/{i}.png";
+							var src = RaylibBeef.Raylib.LoadImage(spritePath);
+
+							if (currentPixel.x + src.width > texturePage.width)
+							{
+								currentPixel.x = 0;
+								currentPixel.y += src.height;
+							}
+
+							RaylibBeef.Raylib.ImageDraw(&texturePage, src, .(0, 0, src.width, src.height), .(currentPixel.x, currentPixel.y, src.width, src.height), Color.white);
+
+							sprite.Size = .(src.width, src.height);
+							sprite.Frames[i].TexturePageCoordinates = .(currentPixel.x, currentPixel.y);
+
+							currentPixel.x += src.width;
+
+							RaylibBeef.Raylib.UnloadImage(src);
 						}
 
-						RaylibBeef.Raylib.ImageDraw(&texturePage, src, .(0, 0, src.width, src.height), .(currentPixel.x, currentPixel.y, src.width, src.height), Color.white);
-
-						sprite.Size = .(src.width, src.height);
-						sprite.Frames[i].TexturePageCoordinates = .(currentPixel.x, currentPixel.y);
-
-						// occupiedSize.x += src.width;
-						currentPixel.x += src.width;
-
-						RaylibBeef.Raylib.UnloadImage(src);
+						Sprites.Add(folder.GetFileName(.. new .()), sprite);
 					}
-
-					Sprites.Add(folder.GetFileName(.. new .()), sprite);
-
-					// Console.WriteLine(Bon.Serialize(sprite, .. scope .()));
 				}
 				spriteIndex++;
 			}

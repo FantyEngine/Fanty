@@ -1,3 +1,4 @@
+/*
 using FantyEngine;
 using static FantyEngine.Fanty;
 
@@ -42,3 +43,4 @@ public class Bullet : GameObject
 		ImageIndex = 1;
 	}
 }
+*/

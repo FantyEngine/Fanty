@@ -1,3 +1,4 @@
+/*
 using FantyEngine;
 using System;
 
@@ -120,6 +121,6 @@ public class Player : GameObject
 	public override void DrawEvent()
 	{
 		base.DrawEvent();
-
 	}
 }
+*/

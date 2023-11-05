@@ -4,6 +4,7 @@ namespace FantyEngine;
 
 extension Fanty
 {
+	/*
 	public static bool PlaceMeeting<T>(float x, float y) where T : GameObject
 	{
 		let room = GetCurrentRoom();
@@ -47,4 +48,5 @@ extension Fanty
 		
 		return false;
 	}
+	*/
 }

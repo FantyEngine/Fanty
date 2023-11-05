@@ -25,7 +25,7 @@ extension Fanty
 		var viewport = GetCurrentRoom().Viewport0;
 		if (viewport.Visible)
 		{
-			Application.Instance.[System.Friend]m_RoomRuntime.Room.Viewport0.CameraProperties = .(x, y, viewport.CameraProperties.width, viewport.CameraProperties.height);
+			// Application.Instance.[System.Friend]m_RoomRuntime.Room.Viewport0.CameraProperties = .(x, y, viewport.CameraProperties.width, viewport.CameraProperties.height);
 		}
 	}
 
@@ -37,6 +37,7 @@ extension Fanty
 	public static float RoomHeight
 		=> GetCurrentRoom().Height;
 
+	/*
 	public static LayerID LayerBackgroundCreate(int depth, String name, String spriteAsset)
 	{
 		let id = Guid.Create();
@@ -70,4 +71,5 @@ extension Fanty
 	{
 		GetCurrentRoom().GetLayerByID(layer).Position.y = newY;
 	}
+	*/
 }

@@ -3,6 +3,6 @@ using FantyEngine;
 namespace Sandbox;
 
 [RegisterGameObject("oWall")]
-public class Wall
+public class oWall : GameObject
 {
 }

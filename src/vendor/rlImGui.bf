@@ -7,7 +7,7 @@ namespace RaylibBeef
 		[CLink]
 		public static extern void* GetWindowGlfw();
 		[CLink]
-		public static extern void CallWindowResize();
+		public static extern void CallWindowResize(void* window, int32 width, int32 height);
 
 		[CLink]
 		public static extern void Fanty_SetupImGui(void* window, char8* defaultFontPath, char8* inconsPath);
@@ -17,5 +17,8 @@ namespace RaylibBeef
 
 		[CLink]
 		public static extern void Fanty_ImGuiEnd(void* window);
+
+		[CLink]
+		public static extern void Fanty_ImGuiPellyTheme(void* dst = null);
 	}
 }

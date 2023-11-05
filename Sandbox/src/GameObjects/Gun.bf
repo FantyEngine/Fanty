@@ -1,3 +1,4 @@
+/*
 using FantyEngine;
 
 namespace Sandbox;
@@ -47,3 +48,4 @@ public class Gun : GameObject
 		if (aimSide != 0) ImageYScale = aimSide;
 	}
 }
+*/
