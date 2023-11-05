@@ -1,5 +1,8 @@
+using System;
+
 namespace FantyEngine;
 
+[AllowDuplicates]
 public enum KeyCode
 {
 	/// Key: NULL, used for no key pressed

@@ -259,28 +259,50 @@ public static class RoomEditor
 					if (RaylibBeef.Raylib.IsKeyDown((int32)RaylibBeef.KeyboardKey.KEY_LEFT_ALT))
 					{
 						var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
-						if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
-						{
-							if (instanceLayer != null)
-							{
-								var goinstance = new FantyEngine.GameObjectInstance();
-								goinstance.SetAssetName("oWall");
-								goinstance.x = cursorGridPos.x;
-								goinstance.y = cursorGridPos.y;
 
-								instanceLayer.GameObjects.Add(goinstance);
-							}
-						}
-						else if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_RIGHT))
+						if (AssetBrowser.GetSelectedGameObject() != null)
 						{
-							for (var go in instanceLayer.GameObjects)
+							if (AssetBrowser.GetSelectedGameObject().HasSprite())
 							{
-								if (go.x == cursorGridPos.x && go.y == cursorGridPos.y)
+								FantyEngine.Fanty.DrawSpriteExt(
+									AssetBrowser.GetSelectedGameObject().SpriteAssetName,
+									0,
+									.(cursorGridPos.x, cursorGridPos.y),
+									.(AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.x, AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.y),
+									.(1, 1), 0);
+							}
+
+
+							if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
+							{
+								if (instanceLayer != null)
 								{
-									delete go;
-									instanceLayer.GameObjects.Remove(go);
+									var goinstance = new FantyEngine.GameObjectInstance();
+									goinstance.SetAssetName(AssetBrowser.GetSelectedGameObject().Name);
+									goinstance.x = cursorGridPos.x;
+									goinstance.y = cursorGridPos.y;
+
+									instanceLayer.GameObjects.Add(goinstance);
 								}
 							}
+							else if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_RIGHT))
+							{
+								for (var go in instanceLayer.GameObjects)
+								{
+									if (go.x == cursorGridPos.x && go.y == cursorGridPos.y)
+									{
+										delete go;
+										instanceLayer.GameObjects.Remove(go);
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
+						{
+
 						}
 					}
 				}

@@ -1,0 +1,20 @@
+{
+        FPS = 30,
+        Frames = [
+                {
+                        Length = 1
+                }
+        ],
+        CollisionMask = {
+                Rect = {
+						x = 18,
+						y = 14,
+                        width = 19,
+                        height = 34
+                }
+        },
+        Origin = {
+                x = 24,
+                y = 24
+        }
+}

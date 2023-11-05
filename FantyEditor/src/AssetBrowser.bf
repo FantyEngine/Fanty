@@ -7,6 +7,18 @@ namespace FantyEditor;
 
 public static class AssetBrowser
 {
+	private static String m_SelectedGameObject ~ if (_ != null) delete _;
+
+	// Replace with asset in the future?
+	public static GameObjectAsset GetSelectedGameObject()
+	{
+		if (!String.IsNullOrEmpty(m_SelectedGameObject))
+		{
+			return AssetsManager.GameObjectAssets[m_SelectedGameObject];
+		}
+		return null;
+	}
+
 	public static void Gui()
 	{
 		ImGui.PushStyleVar(ImGui.StyleVar.WindowPadding, .(0, 0));
@@ -59,7 +71,18 @@ public static class AssetBrowser
 								.(normalizedTextureRegion.x, normalizedTextureRegion.y),
 								.(normalizedTextureRegion.x + normalizedTextureRegion.width, normalizedTextureRegion.y + normalizedTextureRegion.height));
 						}
-						ImGui.TreeNodeEx(object.key, fileNodeFlags);
+
+						var flags = fileNodeFlags;
+						if (m_SelectedGameObject == object.key)
+							flags |= .Selected;
+
+						ImGui.TreeNodeEx(object.key, flags);
+						if (ImGui.IsItemClicked())
+						{
+							if (m_SelectedGameObject != null)
+								delete m_SelectedGameObject;
+							m_SelectedGameObject = new .(object.key);
+						}
 						ImGui.TreePop();
 					}
 					ImGui.TreePop();

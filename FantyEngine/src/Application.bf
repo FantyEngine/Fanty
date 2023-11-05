@@ -1,3 +1,88 @@
+using System;
+using RaylibBeef;
+using System.Collections;
+
+namespace FantyEngine;
+
+public abstract class Application
+{
+	public static Application Instance { get; private set; }
+
+	protected RoomInstance CurrentRoom = null;
+	protected GameObject* CurrentGameObject = null;
+
+	struct GameObjectType
+	{
+		public Type type;
+		public StringView Name;
+	}
+
+	private List<GameObjectType> m_GameObjectTypes = new .() ~ delete _;
+
+	protected void Init()
+	{
+		for (let type in Type.Types)
+		{
+			if (let regAttribute = type.GetCustomAttribute<FantyEngine.RegisterGameObjectAttribute>())
+			{
+				m_GameObjectTypes.Add(.() { type = type, Name = regAttribute.Name });
+			}
+		}
+	}
+
+	protected RoomInstance LoadRoomFromAsset(RoomAsset asset)
+	{
+		var roomInstance = new RoomInstance();
+		roomInstance.Width = asset.Width;
+		roomInstance.Height = asset.Height;
+		for (var instanceLayer in asset.InstanceLayers)
+		{
+			var newInstanceLayer = new RoomInstance.InstanceLayer();
+
+			for (var go in instanceLayer.GameObjects)
+			{
+				for (let goType in m_GameObjectTypes)
+				{
+					var goAsset = AssetsManager.GameObjectAssets[go.AssetName];
+
+					if (go.AssetName == goType.Name)
+					{
+						let type = goType.type;
+						if (Object typeobj = type.CreateObject())
+						{
+							// We should check for this cast
+							var gameobject = (GameObject)typeobj;
+							gameobject.x = go.x;
+							gameobject.y = go.y;
+							gameobject.[Friend]m_SpriteIndex = new String(goAsset.SpriteAssetName);
+							// Console.WriteLine(gameobject.x);
+							newInstanceLayer.GameObjects.Add(gameobject);
+						}
+					}
+				}
+
+			}
+			roomInstance.InstanceLayers.Add(newInstanceLayer);
+		}
+		for (var bgLayer in asset.BackgroundLayers)
+		{
+			var newBGLayer = new RoomInstance.BackgroundLayer();
+			newBGLayer.Color = bgLayer.Color;
+			newBGLayer.Position = bgLayer.Position;
+			newBGLayer.Speed = bgLayer.Speed;
+			newBGLayer.Stretch = bgLayer.Stretch;
+			newBGLayer.HorizontalTile = bgLayer.HorizontalTile;
+			newBGLayer.VerticalTile = bgLayer.VerticalTile;
+			if (bgLayer.HasSprite())
+				newBGLayer.SetSprite(bgLayer.Sprite);
+
+			roomInstance.BackgroundLayers.Add(newBGLayer);
+		}
+
+		return roomInstance;
+	}
+}
+
 /*
 using System;
 using RaylibBeef;

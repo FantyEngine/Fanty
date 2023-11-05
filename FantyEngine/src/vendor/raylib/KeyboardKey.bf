@@ -4,6 +4,7 @@ using System.Interop;
 namespace RaylibBeef;
 
 /// Keyboard keys (US keyboard layout)
+[AllowDuplicates]
 public enum KeyboardKey : c_int
 {
 	/// Key: NULL, used for no key pressed

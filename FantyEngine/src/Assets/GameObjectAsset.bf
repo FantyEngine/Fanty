@@ -9,6 +9,7 @@ public class GameObjectAsset
 	public String Name = new .() ~ if (_ != null) delete _;
 
 	public String SpriteAssetName = new .() ~ if (_ != null) delete _;
+	private SpriteAsset* SpriteAsset;
 
 	public String CollisionMaskAsset ~ if (_ != null) delete _;
 	public bool CollisionMaskSameAsSprite = true;
@@ -25,12 +26,25 @@ public class GameObjectAsset
 
 	public void SetSpriteAssetName(String name)
 	{
+		var newName = new String(name);
 		delete SpriteAssetName;
-		this.SpriteAssetName = new String(name);
+		this.SpriteAssetName = newName;
+
+		if (AssetsManager.Sprites.ContainsKey(SpriteAssetName))
+			this.SpriteAsset = &AssetsManager.Sprites[SpriteAssetName];
 	}
 
 	public bool HasSprite()
 	{
-		return !String.IsNullOrEmpty(SpriteAssetName);
+		return SpriteAsset != null;
+	}
+
+	public SpriteAsset GetSpriteAsset()
+	{
+		if (HasSprite())
+		{
+			return *SpriteAsset;
+		}
+		return null;
 	}
 }

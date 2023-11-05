@@ -1,6 +1,6 @@
 {
-	Name = "oWall",
-	SpriteAssetName = "sWall",
+	Name = "oPlayer",
+	SpriteAssetName = "sPlayer",
 	CollisionMaskAsset = null,
 	CollisionMaskSameAsSprite = true,
 	Visible = false,

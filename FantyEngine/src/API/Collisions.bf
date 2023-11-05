@@ -4,14 +4,14 @@ namespace FantyEngine;
 
 extension Fanty
 {
-	/*
 	public static bool PlaceMeeting<T>(float x, float y) where T : GameObject
 	{
 		let room = GetCurrentRoom();
 		let original = GetCurrentGameObject();
 
-		if (String.IsNullOrEmpty(original.SpriteIndex))
+		if (original.SpriteAsset == null)
 			return false;
+
 		var collisionMask = original.CollisionMask;
 		let oBBox = Rectangle(
 			(x - original.xOrigin) + collisionMask.x,
@@ -20,7 +20,7 @@ extension Fanty
 			(y - original.yOrigin) + collisionMask.y + collisionMask.height);
 
 		for (let layer in room.InstanceLayers)
-		for (let obj in layer.value.GameObjects.Values)
+		for (let obj in layer.GameObjects)
 		{
 			if (obj.GetType() == typeof(T))
 			{
@@ -48,5 +48,4 @@ extension Fanty
 		
 		return false;
 	}
-	*/
 }

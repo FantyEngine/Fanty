@@ -20,8 +20,8 @@ public class AssetsManager
 
 	public static void LoadAllAssets()
 	{
-		LoadAllGameObjects();
 		LoadAllSprites();
+		LoadAllGameObjects();
 	}
 
 	private static void LoadAllGameObjects()
@@ -50,6 +50,7 @@ public class AssetsManager
 
 					if (Load() != .Err)
 					{
+						object.SetSpriteAssetName(object.SpriteAssetName);
 						GameObjectAssets.Add(name, object);
 					}
 				}

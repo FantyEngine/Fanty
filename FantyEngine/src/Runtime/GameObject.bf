@@ -17,6 +17,7 @@ public class GameObject
 
 	private String m_SpriteIndex ~ if (_ != null) delete _;
 	private SpriteAsset m_SpriteAsset => (String.IsNullOrEmpty(m_SpriteIndex) ? null : AssetsManager.Sprites[m_SpriteIndex]);
+	public SpriteAsset SpriteAsset => m_SpriteAsset;
 
 	private int m_ImageIndex = 0;
 	public int ImageIndex { get => m_ImageIndex; set { m_ImageIndex = value; } }
@@ -32,6 +33,39 @@ public class GameObject
 	{
 		public float Clock;
 		public int Frame = 0;
+	}
+
+	public String CollisionMaskAsset ~ if (_ != null) delete _;
+	public bool CollisionMaskSameAsSprite = true;
+	public Rectangle CollisionMask
+	{
+		get
+		{
+			Rectangle mask = .();
+			if (CollisionMaskSameAsSprite)
+			{
+				mask = m_SpriteAsset.CollisionMask.Rect;
+			}
+			else
+			{
+				mask = AssetsManager.Sprites[CollisionMaskAsset].CollisionMask.Rect;
+			}
+
+			if (ImageXScale < 0)
+			{
+				mask.x = m_SpriteAsset.Size.x - (mask.x + mask.width);
+			}
+			if (ImageYScale < 0)
+			{
+				mask.y = m_SpriteAsset.Size.y - (mask.y + mask.height);
+			}
+
+			mask.x = mask.x * Math.Abs(ImageXScale);
+			mask.y = mask.y * Math.Abs(ImageYScale);
+			mask.width = mask.width * Math.Abs(ImageXScale);
+			mask.height = mask.height * Math.Abs(ImageYScale);
+			return mask;
+		}
 	}
 
 	public virtual void CreateEvent(){}

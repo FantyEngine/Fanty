@@ -1,55 +1,55 @@
 using System;
 using FantyEngine;
 using RaylibBeef;
-using System.Collections;
 
 namespace FantyRuntime;
 
-class Program
+public class Game : Application
 {
-	public static void Main(String[] args)
+	public this()
 	{
-		var game = scope Game();
+		Instance = this;
+		Init();
 
-		/*
 		Raylib.SetConfigFlags((int32)(ConfigFlags.FLAG_VSYNC_HINT));
 		Raylib.SetTraceLogLevel((int32)(TraceLogLevel.LOG_WARNING | .LOG_ERROR | .LOG_FATAL));
 		Raylib.InitWindow(1280, 720, "Fanty Runtime - Sandbox");
 		Raylib.SetTargetFPS(60);
 
 		AssetsManager.LoadAllAssets();
+
 		RoomAsset room = scope .();
 		Bon.Bon.DeserializeFromFile(ref room, scope $"{FantyEngine.AssetsManager.AssetsPath}/rooms/testroom.room");
 
-		
+		CurrentRoom = LoadRoomFromAsset(room);
 
-		Raylib.SetWindowSize((int32)roomInstance.Width, (int32)roomInstance.Height);
+		Raylib.SetWindowSize((int32)CurrentRoom.Width, (int32)CurrentRoom.Height);
 
 		void Update()
 		{
-			for (let layer in roomInstance.InstanceLayers)
+			for (let layer in CurrentRoom.InstanceLayers)
 				for (var object in layer.GameObjects)
 				{
-					// m_RoomRuntime.CurrentGameObject = &object;
+					CurrentGameObject = &object;
 					object.BeginStepEvent();
 				}
-			for (let layer in roomInstance.InstanceLayers)
+			for (let layer in CurrentRoom.InstanceLayers)
 				for (var object in layer.GameObjects)
 				{
-					// m_RoomRuntime.CurrentGameObject = &object;
+					CurrentGameObject = &object;
 					object.StepEvent();
 				}
-			for (let layer in roomInstance.InstanceLayers)
+			for (let layer in CurrentRoom.InstanceLayers)
 				for (var object in layer.GameObjects)
 				{
-					// m_RoomRuntime.CurrentGameObject = &object;
+					CurrentGameObject = &object;
 					object.EndStepEvent();
 				}
 
 			Raylib.BeginDrawing();
 			Raylib.ClearBackground(FantyEngine.Color.black);
 
-			for (let layer in roomInstance.BackgroundLayers)
+			for (let layer in CurrentRoom.BackgroundLayers)
 			{
 				if (String.IsNullOrEmpty(layer.Sprite))
 					Fanty.DrawClear(layer.Color);
@@ -60,9 +60,9 @@ class Program
 					var asset = AssetsManager.Sprites[layer.Sprite];
 
 					if (layer.HorizontalTile)
-						countX = (roomInstance.Width / asset.Size.x) + 1;
+						countX = (CurrentRoom.Width / asset.Size.x) + 1;
 					if (layer.VerticalTile)
-						countY = (roomInstance.Height / asset.Size.y) + 1;
+						countY = (CurrentRoom.Height / asset.Size.y) + 1;
 
 					for (var x < countX)
 					{
@@ -77,22 +77,22 @@ class Program
 				}
 			}
 
-			for (let layer in roomInstance.InstanceLayers)
+			for (let layer in CurrentRoom.InstanceLayers)
 			for (var object in layer.GameObjects)
 			{
-				// m_RoomRuntime.CurrentGameObject = &object;
+				CurrentGameObject = &object;
 				object.DrawBeginEvent();
 			}
-			for (let layer in roomInstance.InstanceLayers)
+			for (let layer in CurrentRoom.InstanceLayers)
 			for (var object in layer.GameObjects)
 			{
-				// m_RoomRuntime.CurrentGameObject = &object;
+				CurrentGameObject = &object;
 				object.DrawEvent();
 			}
-			for (let layer in roomInstance.InstanceLayers)
+			for (let layer in CurrentRoom.InstanceLayers)
 			for (var object in layer.GameObjects)
 			{
-				// m_RoomRuntime.CurrentGameObject = &object;
+				CurrentGameObject = &object;
 				object.DrawEndEvent();
 			}
 
@@ -106,6 +106,11 @@ class Program
 		}
 
 		Raylib.CloseWindow();
-		*/
+
+	}
+
+	public ~this()
+	{
+		delete CurrentRoom;
 	}
 }

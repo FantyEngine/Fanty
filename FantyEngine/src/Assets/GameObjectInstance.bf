@@ -39,39 +39,6 @@ public class GameObjectInstance
 
 	public float ImageSpeed = 1.0f;
 
-	public String CollisionMaskAsset ~ if (_ != null) delete _;
-	public bool CollisionMaskSameAsSprite = true;
-	public Rectangle CollisionMask
-	{
-		get
-		{
-			Rectangle mask = .();
-			if (CollisionMaskSameAsSprite)
-			{
-				mask = SpriteAsset.CollisionMask.Rect;
-			}
-			else
-			{
-				mask = AssetsManager.Sprites[CollisionMaskAsset].CollisionMask.Rect;
-			}
-
-			if (ImageXScale < 0)
-			{
-				mask.x = SpriteAsset.Size.x - (mask.x + mask.width);
-			}
-			if (ImageYScale < 0)
-			{
-				mask.y = SpriteAsset.Size.y - (mask.y + mask.height);
-			}
-
-			mask.x = mask.x * Math.Abs(ImageXScale);
-			mask.y = mask.y * Math.Abs(ImageYScale);
-			mask.width = mask.width * Math.Abs(ImageXScale);
-			mask.height = mask.height * Math.Abs(ImageYScale);
-			return mask;
-		}
-	}
-
 	public float ImageXScale = 1.0f;
 	public float ImageYScale = 1.0f;
 

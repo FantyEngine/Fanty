@@ -1,3 +1,104 @@
+using FantyEngine;
+using System;
+
+namespace Sandbox;
+
+[RegisterGameObject("oPlayer")]
+public class Player : GameObject
+{
+	private float hsp = 0.0f;
+	private float vsp = 0.0f;
+	private float grv = 0.3f;
+	private float walkSpd = 4.0f;
+
+	private bool onGround = false;
+	private bool wasOnGround = false;
+
+	private float canJump = 0.0f;
+
+	public override void StepEvent()
+	{
+		let keyLeft = Fanty.IsKeyDown(.LeftArrow) || Fanty.IsKeyDown(.A);
+		let keyRight = Fanty.IsKeyDown(.RightArrow) || Fanty.IsKeyDown(.D);
+		let keyJump = Fanty.IsKeyPressed(.Space);
+		let keyJumpHeld = Fanty.IsKeyDown(.Space);
+
+		let onGround = (Fanty.PlaceMeeting<Wall>(x, y + 1));
+
+		let move = (int)keyRight - (int)keyLeft;
+
+		hsp = (move * walkSpd);
+		vsp += grv;
+
+		// Jumping
+		let jumpSpd = -7.0f;
+		canJump -= 1;
+		if (canJump > 0 && keyJump)
+		{
+			vsp = -7.0f;
+			canJump = 0.0f;
+		}
+		if (vsp < 0 && !keyJumpHeld)
+		{
+			vsp = Math.Max(vsp, jumpSpd * 0.5f);
+		}
+
+		// Collision
+		if (Fanty.PlaceMeeting<Wall>(x + hsp, y))
+		{
+			while (!Fanty.PlaceMeeting<Wall>(x + Math.Sign(hsp), y))
+			{
+				x += Math.Sign(hsp);
+			}
+			hsp = 0;
+		}
+
+		if (Fanty.PlaceMeeting<Wall>(x, y + vsp))
+		{
+			while (!Fanty.PlaceMeeting<Wall>(x, y + Math.Sign(vsp)))
+			{
+				y += Math.Sign(vsp);
+			}
+			vsp = 0;
+			canJump = 10;
+		}
+
+		x += hsp;
+		y += vsp;
+
+		wasOnGround = onGround;
+
+		// Animation
+		/*
+		var aimSide = Mathf.Sign(Fanty.MouseX - x);
+		if (aimSide != 0) ImageXScale = aimSide;
+
+		if (!Fanty.PlaceMeeting<Wall>(x, y + 1))
+		{
+			SpriteIndex = "sPlayerA";
+			ImageSpeed = 0;
+			if (Math.Sign(vsp) > 0) ImageIndex = 1; else ImageIndex = 0;
+		}
+		else
+		{
+			canJump = 10.0f;
+			ImageSpeed = 1;
+			if (hsp == 0)
+			{
+				SpriteIndex = "sPlayer";
+			}
+			else
+			{
+				if (aimSide != Math.Sign(hsp))
+					SpriteIndex = "sPlayerRB";
+				else
+					SpriteIndex = "sPlayerR";
+			}
+		}
+		*/
+	}
+}
+
 /*
 using FantyEngine;
 using System;

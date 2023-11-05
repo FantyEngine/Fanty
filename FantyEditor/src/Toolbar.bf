@@ -2,6 +2,7 @@ using ImGui;
 using System.Collections;
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace FantyEditor;
 
@@ -146,13 +147,14 @@ public static class Toolbar
 				// startinfo.SetWorkingDirectory(@"D:\Fanty\build\Debug_Win64\FantyRuntime");
 				startinfo.SetArguments("");
 				startinfo.CreateNoWindow = true;
+				startinfo.RedirectStandardOutput = true;
 
 				var process = scope SpawnedProcess();
 				process.Start(startinfo);
 
 				if (process.WaitFor() && (process.ExitCode == 0))
 				{
-					Console.WriteLine("Project built");
+					Output.AddOutputText("Played successfully!");
 				}
 
 				process.Close();

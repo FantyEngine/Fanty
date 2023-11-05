@@ -18,36 +18,18 @@ public static class MainEditor
 	{
 		gBonEnv.serializeFlags |= .Verbose | .IncludeDefault;
 
+		/*
 		var goa = scope FantyEngine.GameObjectAsset();
 		goa.SetName("oWall");
 		goa.SetSpriteAssetName("sSolidWall");
 
 		File.WriteAllText(scope $"{FantyEngine.AssetsManager.AssetsPath}/objects/oWall.object", Bon.Serialize(goa, .. scope .()));
+		*/
 
 		FantyEngine.AssetsManager.LoadAllAssets();
 
 		m_BG_Image = Raylib.LoadTexture(@"C:\Program Files\GameMaker\GUI\Skins\Dark\Images\Background\BG_Image.png");
 		m_BG_Texture = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
-
-		for (let type in Type.Types)
-		{
-			if (let registerGOAttribute = type.GetCustomAttribute<FantyEngine.RegisterGameObjectAttribute>())
-			{
-				if (Object typeobj = type.CreateObject())
-				{
-					for (let field in type.GetFields(.Instance))
-					{
-						var val = field.GetValue(typeobj).Value;
-						Object object = null;
-						// Encapsulate!(ref val, out object);
-						object = val.GetBoxed().Value;
-						Console.WriteLine(scope $"{field.Name}, {object}");
-						delete object;
-					}
-					delete typeobj;
-				}
-			}
-		}
 
 		RoomEditor.Init();
 		Toolbar.Init();
@@ -108,8 +90,9 @@ public static class MainEditor
 		Toolbar.Gui();
 		AssetBrowser.Gui();
 		RoomEditor.Gui();
+		Output.Gui();
 
-		ImGui.ShowDemoWindow();
+		// ImGui.ShowDemoWindow();
 	}
 
 	private static void Dockspace()
