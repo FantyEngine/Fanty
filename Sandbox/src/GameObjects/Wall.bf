@@ -3,6 +3,9 @@ using FantyEngine;
 namespace Sandbox;
 
 [RegisterGameObject("oWall")]
-public class Wall
+public class Wall : GameObject
 {
+	public override void StepEvent()
+	{
+	}
 }

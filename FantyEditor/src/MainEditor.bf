@@ -117,8 +117,8 @@ public static class MainEditor
 	    ImGui.PushStyleColor(ImGui.Col.WindowBg, 0);
 
 	    let viewport = ImGui.GetMainViewport();
-	    ImGui.SetNextWindowPos(.(viewport.Pos.x, viewport.Pos.y + 62 + 2), ImGui.Cond.Always);
-	    ImGui.SetNextWindowSize(.(viewport.Size.x, viewport.Size.y - 62 - 2));
+	    ImGui.SetNextWindowPos(.(viewport.Pos.x, viewport.Pos.y + 62 + 3), ImGui.Cond.Always);
+	    ImGui.SetNextWindowSize(.(viewport.Size.x, viewport.Size.y - 62 - 3));
 	    ImGui.SetNextWindowViewport(viewport.ID);
 
 	    ImGui.PushStyleVar(ImGui.StyleVar.WindowPadding, .(0, 0));

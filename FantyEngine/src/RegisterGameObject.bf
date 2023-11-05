@@ -2,7 +2,7 @@ using System;
 
 namespace FantyEngine;
 
-[AttributeUsage(.Class, .ReflectAttribute, ReflectUser=.All)]
+[AttributeUsage(.Class, .ReflectAttribute, ReflectUser=.All, AlwaysIncludeUser=.All)]
 public struct RegisterGameObjectAttribute : Attribute
 {
 	public String Name;

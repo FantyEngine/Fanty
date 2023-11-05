@@ -1,6 +1,7 @@
 using ImGui;
 using System.Collections;
 using System;
+using System.Diagnostics;
 
 namespace FantyEditor;
 
@@ -72,7 +73,7 @@ public static class Toolbar
 		ImGui.PushStyleColor(.Button, FantyEngine.Color.transparent);
 		if (ImGui.Begin("Toolbar", null, .NoResize | .NoMove | .NoTitleBar | .NoScrollbar | .NoDecoration))
 		{
-			void DrawButton(String key, String caption)
+			bool DrawButton(String key, String caption)
 			{
 				ImGui.PushStyleVar(.FrameRounding, 4);
 
@@ -84,7 +85,7 @@ public static class Toolbar
 				let buttonWidth = FantyEngine.Mathf.Max(buttonContentPadding + captionWidth, 32 + buttonContentPadding);
 				let halfButtonWidth = buttonWidth * 0.5f;
 
-				ImGui.ButtonEx(scope $"###{key}{caption}", .(buttonWidth, ImGui.GetContentRegionAvail().y));
+				var ret = ImGui.ButtonEx(scope $"###{key}{caption}", .(buttonWidth, ImGui.GetContentRegionAvail().y));
 
 				ImGui.SameLine();
 
@@ -100,6 +101,8 @@ public static class Toolbar
 
 				ImGui.SameLine();
 				ImGui.PopStyleVar();
+
+				return ret;
 			}
 
 			void VerticalSeparator()
@@ -119,7 +122,41 @@ public static class Toolbar
 				ImGui.PopStyleVar();
 			}
 
-			DrawButton("playgame", "Game");
+			if (DrawButton("playgame", "Game"))
+			{
+				/*
+				var startinfo = scope ProcessStartInfo();
+				startinfo.SetFileName(@"C:\Users\Braedon\AppData\Local\BeefLang\bin\BeefBuild_d.exe");
+				startinfo.SetWorkingDirectory(@"D:\Fanty");
+				startinfo.SetArguments("");
+
+				var process = scope SpawnedProcess();
+				process.Start(startinfo);
+
+				if (process.WaitFor() && (process.ExitCode == 0))
+				{
+					Console.WriteLine("Project built");
+				}
+
+				process.Close();
+				*/
+
+				var startinfo = scope ProcessStartInfo();
+				startinfo.SetFileName(@"D:\Fanty\build\Debug_Win64\FantyRuntime\FantyRuntime.exe");
+				// startinfo.SetWorkingDirectory(@"D:\Fanty\build\Debug_Win64\FantyRuntime");
+				startinfo.SetArguments("");
+				startinfo.CreateNoWindow = true;
+
+				var process = scope SpawnedProcess();
+				process.Start(startinfo);
+
+				if (process.WaitFor() && (process.ExitCode == 0))
+				{
+					Console.WriteLine("Project built");
+				}
+
+				process.Close();
+			}
 			DrawButton("playscene", "Room");
 			VerticalSeparator();
 			DrawButton("build", "Build");

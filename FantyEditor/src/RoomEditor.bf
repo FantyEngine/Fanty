@@ -258,9 +258,9 @@ public static class RoomEditor
 
 					if (RaylibBeef.Raylib.IsKeyDown((int32)RaylibBeef.KeyboardKey.KEY_LEFT_ALT))
 					{
+						var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
 						if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
 						{
-							var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
 							if (instanceLayer != null)
 							{
 								var goinstance = new FantyEngine.GameObjectInstance();
@@ -269,6 +269,17 @@ public static class RoomEditor
 								goinstance.y = cursorGridPos.y;
 
 								instanceLayer.GameObjects.Add(goinstance);
+							}
+						}
+						else if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_RIGHT))
+						{
+							for (var go in instanceLayer.GameObjects)
+							{
+								if (go.x == cursorGridPos.x && go.y == cursorGridPos.y)
+								{
+									delete go;
+									instanceLayer.GameObjects.Remove(go);
+								}
 							}
 						}
 					}
