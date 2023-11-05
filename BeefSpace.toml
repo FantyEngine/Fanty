@@ -1,5 +1,11 @@
 FileVersion = 1
-Projects = {FantyEngine = {Path = "."}, Sandbox = {Path = "Sandbox"}, bon = {Path = "vendor/bon"}, ImGui = {Path = "vendor/imgui-beef"}, FantyEditor = {Path = "FantyEditor"}, FantyRuntime = {Path = "FantyRuntime"}, GLFW = {Path = "vendor/glfw-beef"}}
+Projects = {Sandbox = {Path = "Sandbox"}, FantyEditor = {Path = "FantyEditor"}, FantyRuntime = {Path = "FantyRuntime"}, GLFW = {Path = "FantyEngine/vendor/glfw-beef"}, FantyEngine = {Path = "FantyEngine"}, ImGui = {Path = "FantyEngine/vendor/imgui-beef"}, bon = {Path = "FantyEngine/vendor/bon"}}
 
 [Workspace]
 StartupProject = "FantyEditor"
+
+[Configs.Test.Win32]
+ConfigSelections = {Sandbox = {Config = "Debug"}}
+
+[Configs.Test.Win64]
+ConfigSelections = {Sandbox = {Config = "Debug"}}

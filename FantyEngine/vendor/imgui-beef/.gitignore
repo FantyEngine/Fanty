@@ -1,0 +1,13 @@
+# Visual Studio
+.vs/
+bin/
+obj/
+
+cimgui/
+
+imgui.ini
+BeefSpace.toml
+BeefSpace_User.toml
+recovery/
+example/build
+example/pkg

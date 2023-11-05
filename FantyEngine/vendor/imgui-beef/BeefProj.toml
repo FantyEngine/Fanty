@@ -1,0 +1,46 @@
+FileVersion = 1
+
+[Project]
+Name = "ImGui"
+
+[Configs.Debug.Win32]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.lib"]
+
+[Configs.Debug.Linux64]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]
+
+[Configs.Debug.macOS]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]
+
+[Configs.Release.Win32]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.lib"]
+
+[Configs.Release.Linux64]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]
+
+[Configs.Release.macOS]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]
+
+[Configs.Paranoid.Win32]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.lib"]
+
+[Configs.Paranoid.Win64]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.lib"]
+
+[Configs.Paranoid.Linux64]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]
+
+[Configs.Paranoid.macOS]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]
+
+[Configs.Test.Win32]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.lib"]
+
+[Configs.Test.Win64]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.lib"]
+
+[Configs.Test.Linux64]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]
+
+[Configs.Test.macOS]
+LibPaths = ["$(ProjectDir)/dist/$(Configuration)-$(Platform)/cimgui.a"]

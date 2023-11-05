@@ -1,0 +1,15 @@
+FileVersion = 1
+
+[Project]
+Name = "bon"
+DefaultNamespace = "Bon"
+
+[[Project.DistinctOptions]]
+Filter = "System.Collections.List<*>"
+ReflectAlwaysInclude = "IncludeFiltered"
+ReflectMethodFilter = "EnsureCapacity"
+
+[[Project.DistinctOptions]]
+Filter = "System.Collections.Dictionary<*,*>"
+ReflectAlwaysInclude = "IncludeFiltered"
+ReflectMethodFilter = "TryAdd;Remove"

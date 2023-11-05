@@ -1,5 +1,5 @@
 FileVersion = 1
-Dependencies = {corlib = "*", FantyEngine = "*", Sandbox = "*", GLFW = "*"}
+Dependencies = {corlib = "*", Sandbox = "*", bon = "*", ImGui = "*", FantyEngine = "*", GLFW = "*"}
 
 [Project]
 Name = "FantyEditor"

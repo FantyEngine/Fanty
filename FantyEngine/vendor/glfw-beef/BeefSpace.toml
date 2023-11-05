@@ -1,0 +1,5 @@
+FileVersion = 1
+Projects = {GLFW = {Path = "."}, Example = {Path = "example"}}
+
+[Workspace]
+StartupProject = "Example"
