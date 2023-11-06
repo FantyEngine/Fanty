@@ -62,6 +62,9 @@ project "FantyHelper"
         "%{prj.name}/vendor/cimgui/imgui/misc/fonts/**.cpp",
 
 		"%{prj.name}/vendor/imgui-fonts/*.h",
+
+		"%{prj.name}/vendor/imgui-knobs/*.cpp",
+		"%{prj.name}/vendor/imgui-knobs/*.h",
     }
 
     includedirs
@@ -76,6 +79,7 @@ project "FantyHelper"
         "%{prj.name}/vendor/cimgui/imgui",
         "%{prj.name}/vendor/cimgui/imgui/backends",
 		"%{prj.name}/vendor/imgui-fonts",
+		"%{prj.name}/vendor/imgui-knobs",
     }
 
     links

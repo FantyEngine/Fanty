@@ -29,6 +29,8 @@ class Program
 				MainEditor.Gui();
 			}
 			Raylib.Fanty_ImGuiEnd(Raylib.GetWindowGlfw());
+
+			// Raylib.DrawFPS(20, 20);
 			Raylib.EndDrawing();
 		}
 

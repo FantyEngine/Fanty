@@ -163,8 +163,6 @@ public static class Toolbar
 			VerticalSeparator();
 			DrawButton("build", "Build");
 			DrawButton("export", "Export");
-			// VerticalSeparator();
-			// DrawButton("info", "Info");
 		}
 		ImGui.PopStyleColor();
 		ImGui.PopStyleVar(2);

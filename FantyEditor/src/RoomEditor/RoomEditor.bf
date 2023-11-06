@@ -2,8 +2,9 @@ using System;
 using ImGui;
 using Bon;
 using System.IO;
+using System.Collections;
 
-namespace FantyEditor;
+namespace FantyEditor.RoomEditor;
 
 public static class RoomEditor
 {
@@ -11,6 +12,9 @@ public static class RoomEditor
 
 	private static Guid m_SelectedID;
 	private static SelectedType m_SelectedType;
+
+	private static Selection m_Selection = new .() ~ delete _;
+	public static List<FantyEngine.GameObjectInstance> SelectedGameObjects => m_Selection.SelectedGameObjects;
 
 	private enum SelectedType
 	{
@@ -72,8 +76,6 @@ public static class RoomEditor
 		ImGui.PushStyleVar(.WindowPadding, .(1, 0));
 		if (ImGui.Begin("Room Editor", null))
 		{
-
-			ImGui.SetCursorPosX(256);
 			if (ImGui.BeginChild("Graphic"))
 			{
 				let contentSize = ImGui.GetContentRegionAvail();
@@ -202,7 +204,7 @@ public static class RoomEditor
 								0,
 								.(gameobject.x, gameobject.y),
 								.(gameobject.xOrigin, gameobject.yOrigin),
-								.(gameobject.ImageXScale, gameobject.ImageYScale), 0);
+								.(gameobject.ImageXScale, gameobject.ImageYScale), gameobject.ImageAngle);
 						}
 						else
 						{
@@ -256,66 +258,105 @@ public static class RoomEditor
 
 					// RaylibBeef.Raylib.DrawRectangleRec(.(cursorGridPos.x, cursorGridPos.y, gridSize.x, gridSize.y), FantyEngine.Color.white);
 
-					if (RaylibBeef.Raylib.IsKeyDown((int32)RaylibBeef.KeyboardKey.KEY_LEFT_ALT))
+					var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
+					let mouseInViewport = ImGui.IsMouseHoveringRect(ImGui.GetWindowPos(), .(ImGui.GetWindowPos().x + ImGui.GetWindowWidth(), ImGui.GetWindowPos().y + ImGui.GetWindowHeight()));
+
+					if (mouseInViewport)
 					{
-						var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
-
-						if (AssetBrowser.GetSelectedGameObject() != null)
+						if (RaylibBeef.Raylib.IsKeyDown((int32)RaylibBeef.KeyboardKey.KEY_LEFT_ALT))
 						{
-							if (AssetBrowser.GetSelectedGameObject().HasSprite())
+							if (AssetBrowser.GetSelectedGameObject() != null)
 							{
-								FantyEngine.Fanty.DrawSpriteExt(
-									AssetBrowser.GetSelectedGameObject().SpriteAssetName,
-									0,
-									.(cursorGridPos.x, cursorGridPos.y),
-									.(AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.x, AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.y),
-									.(1, 1), 0);
-							}
-
-
-							if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
-							{
-								if (instanceLayer != null)
+								if (AssetBrowser.GetSelectedGameObject().HasSprite())
 								{
-									var goinstance = new FantyEngine.GameObjectInstance();
-									goinstance.SetAssetName(AssetBrowser.GetSelectedGameObject().Name);
-									goinstance.x = cursorGridPos.x;
-									goinstance.y = cursorGridPos.y;
-
-									instanceLayer.GameObjects.Add(goinstance);
+									FantyEngine.Fanty.DrawSpriteExt(
+										AssetBrowser.GetSelectedGameObject().SpriteAssetName,
+										0,
+										.(cursorGridPos.x, cursorGridPos.y),
+										.(AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.x, AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.y),
+										.(1, 1), 0);
 								}
-							}
-							else if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_RIGHT))
-							{
-								for (var go in instanceLayer.GameObjects)
+
+
+								if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
 								{
-									if (go.x == cursorGridPos.x && go.y == cursorGridPos.y)
+									if (instanceLayer != null)
 									{
-										delete go;
-										instanceLayer.GameObjects.Remove(go);
+										var goinstance = new FantyEngine.GameObjectInstance();
+										goinstance.SetAssetName(AssetBrowser.GetSelectedGameObject().Name);
+										goinstance.x = cursorGridPos.x;
+										goinstance.y = cursorGridPos.y;
+
+										instanceLayer.GameObjects.Add(goinstance);
 									}
 								}
 							}
 						}
-					}
-					else
-					{
-						if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
+						else
 						{
+							if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
+							{
+								var clickedObjectsCount = 0;
+								for (var go in instanceLayer.GameObjects)
+								{
+									let goLeftSide = go.x - go.xOrigin;
+									let goRightSide = goLeftSide + (go.HasSprite() ? go.SpriteAsset.Size.x : 0) * go.ImageXScale;
+									let goTopSide = go.y - go.yOrigin;
+									let goBottomSide = goTopSide + (go.HasSprite() ? go.SpriteAsset.Size.y : 0) * go.ImageYScale;
+									let inX = FantyEngine.Mathf.IsWithin(cursorWorldPos.x, goLeftSide, goRightSide);
+									let inY = FantyEngine.Mathf.IsWithin(cursorWorldPos.y, goTopSide, goBottomSide);
 
+									if (inX && inY)
+									{
+										m_Selection.ClickSelect(go);
+										clickedObjectsCount++;
+									}
+								}
+								if (clickedObjectsCount == 0)
+									m_Selection.DeselectAll();
+							}
 						}
 					}
 				}
 
 				RaylibBeef.Raylib.EndMode2D();
 
-				var rectScreenPos = RaylibBeef.Raylib.GetWorldToScreen2D(.(0, 0), m_EditorCamera);
-				var rectScreenPosMax = RaylibBeef.Raylib.GetWorldToScreen2D(.(currentRoom.Width, currentRoom.Height), m_EditorCamera);
-				RaylibBeef.Raylib.DrawLineEx(.(rectScreenPos.x, rectScreenPos.y), .(rectScreenPosMax.x, rectScreenPos.y), 1, FantyEngine.Color.white); 		 // top
-				RaylibBeef.Raylib.DrawLineEx(.(rectScreenPos.x, rectScreenPos.y), .(rectScreenPos.x, rectScreenPosMax.y), 1, FantyEngine.Color.white); 		 // left
-				RaylibBeef.Raylib.DrawLineEx(.(rectScreenPos.x, rectScreenPosMax.y), .(rectScreenPosMax.x, rectScreenPosMax.y), 1, FantyEngine.Color.white); // bottom
-				RaylibBeef.Raylib.DrawLineEx(.(rectScreenPosMax.x, rectScreenPos.y), .(rectScreenPosMax.x, rectScreenPosMax.y), 1, FantyEngine.Color.white); // right
+				let rectScreenPos = RaylibBeef.Raylib.GetWorldToScreen2D(.(0, 0), m_EditorCamera);
+				let rectScreenPosMax = RaylibBeef.Raylib.GetWorldToScreen2D(.(currentRoom.Width, currentRoom.Height), m_EditorCamera);
+				DrawRectangle(.(rectScreenPos.x, rectScreenPos.y, rectScreenPosMax.x - rectScreenPos.x, rectScreenPosMax.y - rectScreenPos.y), FantyEngine.Color.white);
 
+				// Selection
+				for (var layer in m_CurrentRoom.InstanceLayers)
+				{
+					for (var gameobject in layer.GameObjects)
+					{
+						if (m_Selection.IsSelected(gameobject))
+						{
+							if (RaylibBeef.Raylib.IsKeyPressed((int32)RaylibBeef.KeyboardKey.KEY_DELETE))
+							{
+								delete gameobject;
+								layer.GameObjects.Remove(gameobject);
+								m_Selection.Deselect(gameobject);
+								continue;
+							}
+
+							let gameobjectScreenPosMin = RaylibBeef.Raylib.GetWorldToScreen2D(.(gameobject.x - gameobject.xOrigin, gameobject.y - gameobject.yOrigin), m_EditorCamera);
+							let gameobjectScreenPosMax = RaylibBeef.Vector2(
+								gameobjectScreenPosMin.x + (gameobject.SpriteAsset.Size.x * gameobject.ImageXScale * m_EditorCamera.zoom),
+								gameobjectScreenPosMin.y + (gameobject.SpriteAsset.Size.y * gameobject.ImageYScale * m_EditorCamera.zoom));
+							DrawRectangle(.(
+								gameobjectScreenPosMin.x,
+								gameobjectScreenPosMin.y,
+								gameobjectScreenPosMax.x - gameobjectScreenPosMin.x,
+								gameobjectScreenPosMax.y - gameobjectScreenPosMin.y),
+								FantyEngine.Color.blue, 2);
+							DrawRectangle(.(gameobjectScreenPosMin.x - 4, gameobjectScreenPosMin.y - 4, 8, 8), FantyEngine.Color.blue, 2); // top left
+							DrawRectangle(.(gameobjectScreenPosMin.x - 4, gameobjectScreenPosMax.y - 4, 8, 8), FantyEngine.Color.blue, 2); // bottom left
+							DrawRectangle(.(gameobjectScreenPosMax.x - 4, gameobjectScreenPosMin.y - 4, 8, 8), FantyEngine.Color.blue, 2); // top right
+							DrawRectangle(.(gameobjectScreenPosMax.x - 4, gameobjectScreenPosMax.y - 4, 8, 8), FantyEngine.Color.blue, 2); // bottom right
+						}
+					}
+				}
 
 				RaylibBeef.Raylib.EndTextureMode();
 
@@ -328,10 +369,7 @@ public static class RoomEditor
 			}
 			ImGui.EndChild();
 			
-
-			ImGui.SameLine();
-			ImGui.SetCursorPosX(0);
-			if (ImGui.BeginChild("Hierarchy", .(256, ImGui.GetContentRegionAvail().y), true))
+			if (ImGui.Begin("Hierarchy", null))
 			{
 				if (ImGui.Button("Save"))
 					Save();
@@ -390,9 +428,30 @@ public static class RoomEditor
 				}
 				ImGui.PopStyleVar();
 			}
-			ImGui.EndChild();
+			ImGui.End();
 		}
 		ImGui.End();
 		ImGui.PopStyleVar();
 	}
+
+	private static void DrawRectangle(FantyEngine.Rectangle rec, FantyEngine.Color color, float lineWidth = 1f)
+	{
+		let rectScreenPos = FantyEngine.Vector2(rec.x, rec.y);
+		let rectScreenPosMax = FantyEngine.Vector2(rec.x + rec.width, rec.y + rec.height);
+
+		if (lineWidth == 1)
+		{
+			RaylibBeef.Raylib.DrawLine((int32)rectScreenPos.x, (int32)rectScreenPos.y, (int32)rectScreenPosMax.x, (int32)rectScreenPos.y, color); 		 // top
+			RaylibBeef.Raylib.DrawLine((int32)rectScreenPos.x, (int32)rectScreenPos.y, (int32)rectScreenPos.x, (int32)rectScreenPosMax.y, color); 		 // left
+			RaylibBeef.Raylib.DrawLine((int32)rectScreenPos.x, (int32)rectScreenPosMax.y, (int32)rectScreenPosMax.x, (int32)rectScreenPosMax.y, color); // bottom
+			RaylibBeef.Raylib.DrawLine((int32)rectScreenPosMax.x, (int32)rectScreenPos.y, (int32)rectScreenPosMax.x, (int32)rectScreenPosMax.y, color); // right
+
+			return;
+		}
+		RaylibBeef.Raylib.DrawLineEx(.(rectScreenPos.x, rectScreenPos.y), .(rectScreenPosMax.x, rectScreenPos.y), lineWidth, color); 		 // top
+		RaylibBeef.Raylib.DrawLineEx(.(rectScreenPos.x, rectScreenPos.y), .(rectScreenPos.x, rectScreenPosMax.y), lineWidth, color); 		 // left
+		RaylibBeef.Raylib.DrawLineEx(.(rectScreenPos.x, rectScreenPosMax.y), .(rectScreenPosMax.x, rectScreenPosMax.y), lineWidth, color); // bottom
+		RaylibBeef.Raylib.DrawLineEx(.(rectScreenPosMax.x, rectScreenPos.y), .(rectScreenPosMax.x, rectScreenPosMax.y), lineWidth, color); // right
+	}
+
 }

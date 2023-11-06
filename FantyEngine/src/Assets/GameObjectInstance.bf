@@ -54,12 +54,8 @@ public class GameObjectInstance
 		public int Frame = 0;
 	}
 
-	/*
-	public void Destroy(GameObject gameObject)
+	public this()
 	{
-		var layer = Application.Instance.GetInstanceLayer(gameObject.InstanceLayerID);
-		layer.GameObjects.Remove(gameObject.GameObjectID);
-		delete gameObject;
+		GameObjectID = Guid.Create();
 	}
-	*/
 }

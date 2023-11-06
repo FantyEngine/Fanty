@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections;
 using ImGui;
 using FantyEngine;
 
@@ -8,6 +9,27 @@ namespace FantyEditor;
 public static class AssetBrowser
 {
 	private static String m_SelectedGameObject ~ if (_ != null) delete _;
+
+	private static Dictionary<String, RaylibBeef.Texture2D> m_Textures = new .() ~ DeleteDictionaryAndKeys!(_);
+
+	public static void Init()
+	{
+		void LoadTexture(String name)
+		{
+			m_Textures.Add(new .(name), RaylibBeef.Raylib.LoadTexture(scope $"D:/Fanty/FantyEditor/assets/{name}.png"));
+		}
+
+		LoadTexture("folder");
+		LoadTexture("folderopen");
+	}
+
+	public static void Deinit()
+	{
+		for (var texture in m_Textures)
+		{
+			RaylibBeef.Raylib.UnloadTexture(texture.value);
+		}
+	}
 
 	// Replace with asset in the future?
 	public static GameObjectAsset GetSelectedGameObject()
@@ -27,12 +49,27 @@ public static class AssetBrowser
 			let directoryNodeFlags = ImGui.TreeNodeFlags.None | .FramePadding | .SpanFullWidth;
 			var fileNodeFlags = ImGui.TreeNodeFlags.None | .FramePadding | .SpanFullWidth | .Leaf;
 
+			bool BeginAssetGroup(String name)
+			{
+				let xref = ImGui.GetCursorPosX();
+				var v = ImGui.TreeNodeEx(scope $"        {name}", directoryNodeFlags);
+
+				ImGui.SameLine();
+				ImGui.SetCursorPosX(xref + 29);
+				ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 7);
+				ImGui.Image((ImGui.TextureID)(int)m_Textures["folder"].id, .(16, 12));
+
+				return v;
+			}
+
 			ImGui.PushStyleVar(ImGui.StyleVar.FramePadding, .(8, 6));
 			{
-				if (ImGui.TreeNodeEx("Sprites", directoryNodeFlags))
+				if (BeginAssetGroup("Sprites"))
 				{
 					for (var sprite in AssetsManager.Sprites)
 					{
+						ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 12);
+
 						var coordinates = sprite.value.Frames[0].TexturePageCoordinates;
 						var normalizedTextureRegion =
 							Rectangle(
@@ -50,11 +87,13 @@ public static class AssetBrowser
 						ImGui.TreePop();
 					}
 					ImGui.TreePop();
+
 				}
-				if (ImGui.TreeNodeEx("Game Objects", directoryNodeFlags))
+				if (BeginAssetGroup("Game Objects"))
 				{
 					for (var object in AssetsManager.GameObjectAssets)
 					{
+						ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 12);
 						if (object.value.HasSprite())
 						{
 							var sprite = AssetsManager.Sprites[object.value.SpriteAssetName];
@@ -87,7 +126,25 @@ public static class AssetBrowser
 					}
 					ImGui.TreePop();
 				}
-				if (ImGui.TreeNodeEx("Rooms", directoryNodeFlags))
+				if (BeginAssetGroup("Fonts"))
+				{
+					// for (var room in AssetsManager.Rooms)
+					// {
+						// ImGui.TreeNodeEx(room.key, fileNodeFlags);
+						// ImGui.TreePop();
+					// }
+					ImGui.TreePop();
+				}
+				if (BeginAssetGroup("Sounds"))
+				{
+					// for (var room in AssetsManager.Rooms)
+					// {
+						// ImGui.TreeNodeEx(room.key, fileNodeFlags);
+						// ImGui.TreePop();
+					// }
+					ImGui.TreePop();
+				}
+				if (BeginAssetGroup("Rooms"))
 				{
 					for (var room in AssetsManager.Rooms)
 					{

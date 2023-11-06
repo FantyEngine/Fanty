@@ -18,48 +18,25 @@ public static class MainEditor
 	{
 		gBonEnv.serializeFlags |= .Verbose | .IncludeDefault;
 
-		/*
-		var goa = scope FantyEngine.GameObjectAsset();
-		goa.SetName("oWall");
-		goa.SetSpriteAssetName("sSolidWall");
-
-		File.WriteAllText(scope $"{FantyEngine.AssetsManager.AssetsPath}/objects/oWall.object", Bon.Serialize(goa, .. scope .()));
-		*/
-
 		FantyEngine.AssetsManager.LoadAllAssets();
 
 		m_BG_Image = Raylib.LoadTexture(@"C:\Program Files\GameMaker\GUI\Skins\Dark\Images\Background\BG_Image.png");
 		m_BG_Texture = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
-		RoomEditor.Init();
 		Toolbar.Init();
+		AssetBrowser.Init();
+		RoomEditor.RoomEditor.Init();
+		Inspector.Init();
+
 		RaylibBeef.Raylib.Fanty_ImGuiPellyTheme();
-		// Themes.Default();
 
-	}
-
-	private static mixin Encapsulate(ref Variant val, out Object obj)
-	{
-		obj = null;
-
-		if (val.IsObject)
-			obj = val.Get<Object>();
-		else
-		{
-			switch (val.VariantType)
-			{
-			case typeof(int): obj = scope:mixin box val.Get<int>(); break;
-			case typeof(float): obj = scope:mixin box val.Get<float>(); break;
-			default:
-				Debug.Assert(false, "No type found!");
-			}
-		}
-		val.Dispose();
 	}
 
 	public static void Deinit()
 	{
-		RoomEditor.Deinit();
+		Inspector.Deinit();
+		RoomEditor.RoomEditor.Deinit();
+		AssetBrowser.Deinit();
 		Toolbar.Deinit();
 
 		Raylib.UnloadRenderTexture(m_BG_Texture);
@@ -89,7 +66,8 @@ public static class MainEditor
 		Dockspace();
 		Toolbar.Gui();
 		AssetBrowser.Gui();
-		RoomEditor.Gui();
+		RoomEditor.RoomEditor.Gui();
+		Inspector.Gui();
 		Output.Gui();
 
 		// ImGui.ShowDemoWindow();

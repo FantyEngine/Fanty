@@ -54,6 +54,9 @@ public abstract class Application
 							var gameobject = (GameObject)typeobj;
 							gameobject.x = go.x;
 							gameobject.y = go.y;
+							gameobject.ImageXScale = go.ImageXScale;
+							gameobject.ImageYScale = go.ImageYScale;
+							gameobject.ImageAngle = go.ImageAngle;
 							gameobject.[Friend]m_SpriteIndex = new String(goAsset.SpriteAssetName);
 							// Console.WriteLine(gameobject.x);
 							newInstanceLayer.GameObjects.Add(gameobject);
