@@ -14,7 +14,7 @@ public static class Toolbar
 	{
 		void LoadButton(String name)
 		{
-			m_Buttons.Add(new .(name), RaylibBeef.Raylib.LoadTexture(scope $"D:/Fanty/FantyEditor/assets/{name}.png"));
+			m_Buttons.Add(new .(name), RaylibBeef.Raylib.LoadTexture(scope $"assets/{name}.png"));
 		}
 
 		LoadButton("playgame");

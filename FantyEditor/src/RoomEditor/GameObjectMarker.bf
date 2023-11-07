@@ -39,7 +39,7 @@ public class GameObjectMarker
 		this.EditorID = ID;
 	}
 
-	public void Update(Vector2 cursorPos, Vector2 cursorWorldPos, bool mouseInViewport)
+	public void Update(Vector2 cursorPos, Vector2 cursorWorldPos, bool mouseInViewport, bool snapping)
 	{
 		if (mouseInViewport && RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
 		{
@@ -61,7 +61,6 @@ public class GameObjectMarker
 			}
 		}
 
-		let snapping = true;
 		if (m_Resizing)
 		{
 			let resizeOffset = (snapping) ? GameObject.SpriteAsset.Size.x * 0.5f : 0;

@@ -16,7 +16,7 @@ public static class AssetBrowser
 	{
 		void LoadTexture(String name)
 		{
-			m_Textures.Add(new .(name), RaylibBeef.Raylib.LoadTexture(scope $"D:/Fanty/FantyEditor/assets/{name}.png"));
+			m_Textures.Add(new .(name), RaylibBeef.Raylib.LoadTexture(scope $"assets/{name}.png"));
 		}
 
 		LoadTexture("folder");

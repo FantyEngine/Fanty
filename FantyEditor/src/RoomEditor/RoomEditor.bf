@@ -31,6 +31,9 @@ public static class RoomEditor
 	private static RaylibBeef.Camera2D m_EditorCamera = .(.(0, 0), .(0, 0), 0, 1);
 	private static bool m_PannedInWindow = false;
 
+	private static FantyEngine.Vector2Int m_GridSize = .(32, 32);
+	private static bool m_GridEnabled = true;
+
 	private static void Save()
 	{
 		Bon.SerializeIntoFile(m_CurrentRoom, scope $"{FantyEngine.AssetsManager.AssetsPath}/rooms/testroom.room");
@@ -90,6 +93,30 @@ public static class RoomEditor
 		ImGui.PushStyleVar(.WindowPadding, .(1, 0));
 		if (ImGui.Begin("Room Editor", null))
 		{
+			if (ImGui.BeginChild("Toolbar", .(0, 25)))
+			{
+				ImGui.SetCursorPosX(6);
+				ImGui.SetCursorPosY(5);
+				ImGui.Text("Snap:");
+
+				ImGui.SameLine();
+
+				int32 gridX = (int32)m_GridSize.x;
+				int32 gridY = (int32)m_GridSize.y;
+				ImGui.SetNextItemWidth(32);
+				if (ImGui.DragInt("###ROOMEDITOR_SNAPX", &gridX, 1, 8, 256))
+					m_GridSize.x = gridX;
+				ImGui.SameLine();
+				ImGui.Text("/");
+				ImGui.SameLine();
+				ImGui.SetNextItemWidth(32);
+				if (ImGui.DragInt("###ROOMEDITOR_SNAPY", &gridY, 1, 8, 256))
+					m_GridSize.y = gridY;
+				ImGui.SameLine();
+				ImGui.Checkbox("###ROOMEDITOR_SNAP_ENABLED", &m_GridEnabled);
+
+				ImGui.EndChild();
+			}
 			if (ImGui.BeginChild("Graphic"))
 			{
 				let contentSize = ImGui.GetContentRegionAvail();
@@ -209,11 +236,9 @@ public static class RoomEditor
 
 				for (let marker in GameObjectMarkers.Values)
 				{
-					marker.Update(.(mousePos.x, mousePos.y), .(mouseWorldPos.x, mouseWorldPos.y), mouseInWindow);
+					marker.Update(.(mousePos.x, mousePos.y), .(mouseWorldPos.x, mouseWorldPos.y), mouseInWindow, m_GridEnabled);
 					marker.Draw(m_EditorCamera);
 				}
-
-				let gridSize = FantyEngine.Vector2Int(32, 32);
 
 				let cameraViewX = FantyEngine.Mathf.CeilToInt(m_LastViewportSize.x / m_EditorCamera.zoom) + 1;
 				let cameraViewY = FantyEngine.Mathf.CeilToInt(m_LastViewportSize.y / m_EditorCamera.zoom) + 1;
@@ -226,23 +251,25 @@ public static class RoomEditor
 				var pixelYOffset = (int)(m_EditorCamera.target.y - (m_EditorCamera.offset.y / m_EditorCamera.zoom));
 				pixelYOffset = FantyEngine.Mathf.Clamp(pixelYOffset, 0, currentRoom.Height);
 
-				for (var x < gridX + 1)
+				if (m_GridEnabled)
 				{
-					let xpos = (int32)((x * gridSize.x));
-					if (xpos > currentRoom.Width)
-						break;
+					for (var x < gridX + 1)
+					{
+						let xpos = (int32)((x * m_GridSize.x));
+						if (xpos > currentRoom.Width)
+							break;
 
-					RaylibBeef.Raylib.DrawLine(xpos, 0, xpos, (int32)currentRoom.Height, .(255, 255, 255, 175));
+						RaylibBeef.Raylib.DrawLine(xpos, 0, xpos, (int32)currentRoom.Height, .(255, 255, 255, 175));
 
+					}
+					for (var y < gridY + 1)
+					{
+						let ypos = (int32)((y * m_GridSize.y));
+						if (ypos > currentRoom.Height)
+							break;
+						RaylibBeef.Raylib.DrawLine(0, ypos, (int32)currentRoom.Width, ypos, .(255, 255, 255, 175));
+					}
 				}
-				for (var y < gridY + 1)
-				{
-					let ypos = (int32)((y * gridSize.y));
-					if (ypos > currentRoom.Height)
-						break;
-					RaylibBeef.Raylib.DrawLine(0, ypos, (int32)currentRoom.Width, ypos, .(255, 255, 255, 175));
-				}
-
 				
 				// Cursor stuff
 				{
@@ -250,8 +277,8 @@ public static class RoomEditor
 						.(RaylibBeef.Raylib.GetMousePosition().x - ImGui.GetWindowPos().x,
 						RaylibBeef.Raylib.GetMousePosition().y - ImGui.GetWindowPos().y), m_EditorCamera);
 					let cursorGridPos = FantyEngine.Vector2(
-						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.x - ((cursorWorldPos.x < 0) ? gridSize.x : 0), gridSize.x),
-						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.y - ((cursorWorldPos.y < 0) ? gridSize.y : 0), gridSize.y));
+						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.x - ((cursorWorldPos.x < 0) ? m_GridSize.x : 0), m_GridSize.x),
+						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.y - ((cursorWorldPos.y < 0) ? m_GridSize.y : 0), m_GridSize.y));
 
 					var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
 					let mouseInViewport = ImGui.IsMouseHoveringRect(ImGui.GetWindowPos(), .(ImGui.GetWindowPos().x + ImGui.GetWindowWidth(), ImGui.GetWindowPos().y + ImGui.GetWindowHeight()));
