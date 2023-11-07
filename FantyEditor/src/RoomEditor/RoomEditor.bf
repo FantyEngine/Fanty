@@ -14,7 +14,11 @@ public static class RoomEditor
 	private static SelectedType m_SelectedType;
 
 	private static Selection m_Selection = new .() ~ delete _;
-	public static List<FantyEngine.GameObjectInstance> SelectedGameObjects => m_Selection.SelectedGameObjects;
+	public static List<GameObjectMarker> SelectedGameObjects => m_Selection.SelectedGameObjects;
+
+	private static Dictionary<Guid, GameObjectMarker> GameObjectMarkers = new .() ~ DeleteDictionaryAndValues!(_);
+
+	private static bool m_ResizingGameObjects = false;
 
 	private enum SelectedType
 	{
@@ -64,6 +68,16 @@ public static class RoomEditor
 
 		instanceLayer.GameObjects.Add(Guid.Create(), instance);
 		*/
+
+		for (var layer in m_CurrentRoom.InstanceLayers)
+		{
+			for (var gameobject in layer.GameObjects)
+			{
+				let id = Guid.Create();
+				var marker = new GameObjectMarker(ref gameobject, id);
+				GameObjectMarkers.Add(id, marker);
+			}
+		}
 	}
 
 	public static void Deinit()
@@ -193,26 +207,10 @@ public static class RoomEditor
 				}
 				RaylibBeef.Raylib.EndScissorMode();
 
-				for (var instanceLayer in currentRoom.InstanceLayers)
+				for (let marker in GameObjectMarkers.Values)
 				{
-					for (var gameobject in instanceLayer.GameObjects)
-					{
-						if (gameobject.HasSprite())
-						{
-							FantyEngine.Fanty.DrawSpriteExt(
-								gameobject.GameObjectAsset.SpriteAssetName,
-								0,
-								.(gameobject.x, gameobject.y),
-								.(gameobject.xOrigin, gameobject.yOrigin),
-								.(gameobject.ImageXScale, gameobject.ImageYScale), gameobject.ImageAngle);
-						}
-						else
-						{
-							RaylibBeef.Raylib.DrawCircle((int32)gameobject.x, (int32)gameobject.y, 16, FantyEngine.Color.gray);
-							RaylibBeef.Raylib.DrawText("?", (int32)gameobject.x - 4, (int32)gameobject.y - 6, 16, FantyEngine.Color.white);
-						}
-						// RaylibBeef.Raylib.DrawRectangleRec(.(gameobject.value.x, gameobject.value.y, 32, 32), Color.red);
-					}
+					marker.Update(.(mousePos.x, mousePos.y), .(mouseWorldPos.x, mouseWorldPos.y), mouseInWindow);
+					marker.Draw(m_EditorCamera);
 				}
 
 				let gridSize = FantyEngine.Vector2Int(32, 32);
@@ -221,7 +219,6 @@ public static class RoomEditor
 				let cameraViewY = FantyEngine.Mathf.CeilToInt(m_LastViewportSize.y / m_EditorCamera.zoom) + 1;
 				var gridX = cameraViewX;
 				var gridY = cameraViewY;
-
 
 				var pixelXOffset = (int)(m_EditorCamera.target.x - (m_EditorCamera.offset.x / m_EditorCamera.zoom));
 				pixelXOffset = FantyEngine.Mathf.Clamp(pixelXOffset, 0, currentRoom.Width);
@@ -256,8 +253,6 @@ public static class RoomEditor
 						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.x - ((cursorWorldPos.x < 0) ? gridSize.x : 0), gridSize.x),
 						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.y - ((cursorWorldPos.y < 0) ? gridSize.y : 0), gridSize.y));
 
-					// RaylibBeef.Raylib.DrawRectangleRec(.(cursorGridPos.x, cursorGridPos.y, gridSize.x, gridSize.y), FantyEngine.Color.white);
-
 					var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
 					let mouseInViewport = ImGui.IsMouseHoveringRect(ImGui.GetWindowPos(), .(ImGui.GetWindowPos().x + ImGui.GetWindowWidth(), ImGui.GetWindowPos().y + ImGui.GetWindowHeight()));
 
@@ -288,33 +283,16 @@ public static class RoomEditor
 										goinstance.y = cursorGridPos.y;
 
 										instanceLayer.GameObjects.Add(goinstance);
+										let id = Guid.Create();
+										var marker = new GameObjectMarker(ref goinstance, id);
+										GameObjectMarkers.Add(id, marker);
+										m_Selection.ClickSelect(marker);
 									}
 								}
 							}
 						}
 						else
 						{
-							if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
-							{
-								var clickedObjectsCount = 0;
-								for (var go in instanceLayer.GameObjects)
-								{
-									let goLeftSide = go.x - go.xOrigin;
-									let goRightSide = goLeftSide + (go.HasSprite() ? go.SpriteAsset.Size.x : 0) * go.ImageXScale;
-									let goTopSide = go.y - go.yOrigin;
-									let goBottomSide = goTopSide + (go.HasSprite() ? go.SpriteAsset.Size.y : 0) * go.ImageYScale;
-									let inX = FantyEngine.Mathf.IsWithin(cursorWorldPos.x, goLeftSide, goRightSide);
-									let inY = FantyEngine.Mathf.IsWithin(cursorWorldPos.y, goTopSide, goBottomSide);
-
-									if (inX && inY)
-									{
-										m_Selection.ClickSelect(go);
-										clickedObjectsCount++;
-									}
-								}
-								if (clickedObjectsCount == 0)
-									m_Selection.DeselectAll();
-							}
 						}
 					}
 				}
@@ -323,39 +301,16 @@ public static class RoomEditor
 
 				let rectScreenPos = RaylibBeef.Raylib.GetWorldToScreen2D(.(0, 0), m_EditorCamera);
 				let rectScreenPosMax = RaylibBeef.Raylib.GetWorldToScreen2D(.(currentRoom.Width, currentRoom.Height), m_EditorCamera);
-				DrawRectangle(.(rectScreenPos.x, rectScreenPos.y, rectScreenPosMax.x - rectScreenPos.x, rectScreenPosMax.y - rectScreenPos.y), FantyEngine.Color.white);
+				DrawRectangle(.(rectScreenPos.x, rectScreenPos.y, rectScreenPosMax.x - rectScreenPos.x, rectScreenPosMax.y - rectScreenPos.y), FantyEngine.Color.white, 2);
 
-				// Selection
-				for (var layer in m_CurrentRoom.InstanceLayers)
+				for (let marker in GameObjectMarkers.Values)
 				{
-					for (var gameobject in layer.GameObjects)
-					{
-						if (m_Selection.IsSelected(gameobject))
-						{
-							if (RaylibBeef.Raylib.IsKeyPressed((int32)RaylibBeef.KeyboardKey.KEY_DELETE))
-							{
-								delete gameobject;
-								layer.GameObjects.Remove(gameobject);
-								m_Selection.Deselect(gameobject);
-								continue;
-							}
+					marker.DrawGui(m_EditorCamera, .(mousePos.x, mousePos.y), .(mouseWorldPos.x, mouseWorldPos.y));
+				}
 
-							let gameobjectScreenPosMin = RaylibBeef.Raylib.GetWorldToScreen2D(.(gameobject.x - gameobject.xOrigin, gameobject.y - gameobject.yOrigin), m_EditorCamera);
-							let gameobjectScreenPosMax = RaylibBeef.Vector2(
-								gameobjectScreenPosMin.x + (gameobject.SpriteAsset.Size.x * gameobject.ImageXScale * m_EditorCamera.zoom),
-								gameobjectScreenPosMin.y + (gameobject.SpriteAsset.Size.y * gameobject.ImageYScale * m_EditorCamera.zoom));
-							DrawRectangle(.(
-								gameobjectScreenPosMin.x,
-								gameobjectScreenPosMin.y,
-								gameobjectScreenPosMax.x - gameobjectScreenPosMin.x,
-								gameobjectScreenPosMax.y - gameobjectScreenPosMin.y),
-								FantyEngine.Color.blue, 2);
-							DrawRectangle(.(gameobjectScreenPosMin.x - 4, gameobjectScreenPosMin.y - 4, 8, 8), FantyEngine.Color.blue, 2); // top left
-							DrawRectangle(.(gameobjectScreenPosMin.x - 4, gameobjectScreenPosMax.y - 4, 8, 8), FantyEngine.Color.blue, 2); // bottom left
-							DrawRectangle(.(gameobjectScreenPosMax.x - 4, gameobjectScreenPosMin.y - 4, 8, 8), FantyEngine.Color.blue, 2); // top right
-							DrawRectangle(.(gameobjectScreenPosMax.x - 4, gameobjectScreenPosMax.y - 4, 8, 8), FantyEngine.Color.blue, 2); // bottom right
-						}
-					}
+				for (let marker in GameObjectMarkers.Values)
+				{
+					marker.LateUpdate();
 				}
 
 				RaylibBeef.Raylib.EndTextureMode();
@@ -434,7 +389,7 @@ public static class RoomEditor
 		ImGui.PopStyleVar();
 	}
 
-	private static void DrawRectangle(FantyEngine.Rectangle rec, FantyEngine.Color color, float lineWidth = 1f)
+	public static void DrawRectangle(FantyEngine.Rectangle rec, FantyEngine.Color color, float lineWidth = 1f)
 	{
 		let rectScreenPos = FantyEngine.Vector2(rec.x, rec.y);
 		let rectScreenPosMax = FantyEngine.Vector2(rec.x + rec.width, rec.y + rec.height);
@@ -454,4 +409,22 @@ public static class RoomEditor
 		RaylibBeef.Raylib.DrawLineEx(.(rectScreenPosMax.x, rectScreenPos.y), .(rectScreenPosMax.x, rectScreenPosMax.y), lineWidth, color); // right
 	}
 
+	public static void RemoveGameObject(GameObjectMarker marker)
+	{
+		for (var layer in m_CurrentRoom.InstanceLayers)
+		{
+			for (var gameobject in layer.GameObjects)
+			{
+				if (gameobject.GameObjectID == marker.GameObject.GameObjectID)
+				{
+					delete marker.GameObject;
+					layer.GameObjects.Remove(gameobject);
+					m_Selection.Deselect(marker);
+					GameObjectMarkers.Remove(marker.EditorID);
+					delete marker;
+					return;
+				}
+			}
+		}
+	}
 }

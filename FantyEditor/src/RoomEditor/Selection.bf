@@ -8,12 +8,12 @@ public class Selection
 	private Vector2 m_selectionStartPos;
 	private Vector2 m_SelectionEndPos;
 
-	public List<GameObjectInstance> SelectedGameObjects = new .() ~ delete _;
+	public List<GameObjectMarker> SelectedGameObjects = new .() ~ delete _;
 
 	public delegate void onSelectEntity();
 	public onSelectEntity OnSelectEntity;
 
-	public void ClickSelect(GameObjectInstance gameobject)
+	public void ClickSelect(GameObjectMarker gameobject)
 	{
 		DeselectAll();
 
@@ -23,7 +23,7 @@ public class Selection
 		}
 	}
 
-	public void ShiftClickSelect(GameObjectInstance gameobject)
+	public void ShiftClickSelect(GameObjectMarker gameobject)
 	{
 		if (!SelectedGameObjects.Contains(gameobject))
 		{
@@ -35,7 +35,7 @@ public class Selection
 		}
 	}
 
-	public void DragSelect(GameObjectInstance gameobject)
+	public void DragSelect(GameObjectMarker gameobject)
 	{
 		if (!SelectedGameObjects.Contains(gameobject))
 		{
@@ -43,7 +43,7 @@ public class Selection
 		}
 	}
 
-	public void Deselect(GameObjectInstance gameobject)
+	public void Deselect(GameObjectMarker gameobject)
 	{
 		if (SelectedGameObjects.Contains(gameobject))
 		{
@@ -62,7 +62,7 @@ public class Selection
 			OnSelectEntity.Invoke();
 	}
 
-	private void AddGameObject(GameObjectInstance gameobject)
+	private void AddGameObject(GameObjectMarker gameobject)
 	{
 		SelectedGameObjects.Add(gameobject);
 
@@ -70,7 +70,7 @@ public class Selection
 			OnSelectEntity.Invoke();
 	}
 
-	private void RemoveGameObject(GameObjectInstance gameobject)
+	private void RemoveGameObject(GameObjectMarker gameobject)
 	{
 		SelectedGameObjects.Remove(gameobject);
 
@@ -78,7 +78,7 @@ public class Selection
 			OnSelectEntity.Invoke();
 	}
 
-	public bool IsSelected(GameObjectInstance gameobject)
+	public bool IsSelected(GameObjectMarker gameobject)
 	{
 		return SelectedGameObjects.Contains(gameobject);
 	}

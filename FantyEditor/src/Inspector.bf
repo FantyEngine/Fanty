@@ -17,8 +17,9 @@ public static class Inspector : IPanel
 	{
 		if (ImGui.Begin("Inspector", null))
 		{
-			for (var go in RoomEditor.RoomEditor.SelectedGameObjects)
+			for (var marker in RoomEditor.RoomEditor.SelectedGameObjects)
 			{
+				var go = marker.GameObject;
 				ImGui.Text(go.AssetName);
 				var pos = float[2](go.x, go.y);
 				if (ImGui.DragFloat2("Position", ref pos))
