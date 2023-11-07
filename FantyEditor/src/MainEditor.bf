@@ -18,6 +18,10 @@ public static class MainEditor
 	{
 		gBonEnv.serializeFlags |= .Verbose | .IncludeDefault;
 
+		var icon = Raylib.LoadImage("assets/desktop/icon_32.png");
+		Raylib.SetWindowIcon(icon);
+		Raylib.UnloadImage(icon);
+
 		FantyEngine.AssetsManager.LoadAllAssets();
 
 		m_BG_Image = Raylib.LoadTexture(@"C:\Program Files\GameMaker\GUI\Skins\Dark\Images\Background\BG_Image.png");
@@ -60,17 +64,12 @@ public static class MainEditor
 
 	public static void Gui()
 	{
-
-		// Background();
-
 		Dockspace();
 		Toolbar.Gui();
 		AssetBrowser.Gui();
 		RoomEditor.RoomEditor.Gui();
 		Inspector.Gui();
 		Output.Gui();
-
-		// ImGui.ShowDemoWindow();
 	}
 
 	private static void Dockspace()

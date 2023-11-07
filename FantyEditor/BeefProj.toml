@@ -4,3 +4,9 @@ Dependencies = {corlib = "*", Sandbox = "*", bon = "*", ImGui = "*", FantyEngine
 [Project]
 Name = "FantyEditor"
 StartupObject = "FantyEditor.Program"
+
+[Platform.Windows]
+IconFile = "$(ProjectDir)/assets/desktop/icon_1024.ico"
+
+[Configs.Release.Win64]
+PostBuildCmds = ["CopyFilesIfNewer(\"$(ProjectDir)/assets\", \"$(BuildDir)\")"]
