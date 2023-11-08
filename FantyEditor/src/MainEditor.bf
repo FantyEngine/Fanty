@@ -22,7 +22,7 @@ public static class MainEditor
 
 		FantyEngine.AssetsManager.LoadAllAssets();
 
-		m_BG_Image = Raylib.LoadTexture(@"C:\Program Files\GameMaker\GUI\Skins\Dark\Images\Background\BG_Image.png");
+		m_BG_Image = Raylib.LoadTexture("assets/bg_image.png");
 		m_BG_Texture = Raylib.LoadRenderTexture(Raylib.GetScreenWidth(), Raylib.GetScreenHeight());
 
 		Toolbar.Init();

@@ -142,9 +142,12 @@ public static class Toolbar
 				process.Close();
 				*/
 
-				var startinfo = scope ProcessStartInfo();
-				startinfo.SetFileName(@"D:\Fanty\build\Debug_Win64\FantyRuntime\FantyRuntime.exe");
-				// startinfo.SetWorkingDirectory(@"D:\Fanty\build\Debug_Win64\FantyRuntime");
+				let startinfo = scope ProcessStartInfo();
+				// This is temporary, don't move the build directory. Just to make testing easier for now.
+				let path = Path.GetDirectoryPath(System.Environment.GetExecutableFilePath(.. scope .()), .. scope .());
+				let runtimePath = scope $"{path}/../FantyRuntime/FantyRuntime.exe";
+
+				startinfo.SetFileName(runtimePath);
 				startinfo.SetArguments("");
 				startinfo.CreateNoWindow = true;
 				startinfo.RedirectStandardOutput = true;

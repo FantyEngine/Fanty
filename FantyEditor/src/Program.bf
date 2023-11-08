@@ -13,7 +13,7 @@ class Program
 		Raylib.SetTraceLogLevel((int32)(TraceLogLevel.LOG_WARNING | .LOG_ERROR | .LOG_FATAL));
 		Raylib.InitWindow(1600, 900, "Fanty Editor");
 		// Raylib.SetTargetFPS(185);
-		Raylib.Fanty_SetupImGui(Raylib.GetWindowGlfw(), @"D:\flimmy\Assets\Resources\Fonts\Questrial-Regular.ttf", "");
+		Raylib.Fanty_SetupImGui(Raylib.GetWindowGlfw(), "assets/fonts/Questrial-Regular.ttf", "");
 
 		MainEditor.Init();
 
