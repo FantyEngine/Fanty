@@ -7,14 +7,12 @@ StartupObject = "GLFW.Program"
 
 [Configs.Debug.Win64]
 OtherLinkFlags = "$(LinkFlags) gdi32.lib user32.lib kernel32.lib shell32.lib"
-LibPaths = ["$(ProjectDir)/dist/windows/glfw3_mt.lib"]
 
 [Configs.Debug.Linux64]
 OtherLinkFlags = "$(LinkFlags) -lglfw"
 
 [Configs.Release.Win64]
 OtherLinkFlags = "$(LinkFlags) gdi32.lib user32.lib kernel32.lib shell32.lib"
-LibPaths = ["$(ProjectDir)/dist/windows/glfw3_mt.lib"]
 
 [Configs.Release.Linux64]
 OtherLinkFlags = "$(LinkFlags) -lglfw"
