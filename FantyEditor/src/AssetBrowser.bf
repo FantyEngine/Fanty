@@ -163,8 +163,8 @@ public static class AssetBrowser
 	private static void OldDrawing()
 	{
 		// let allFolders = Directory.EnumerateDirectories(MainEditor.AssetsPath);
-		let allFiles = Directory.EnumerateFiles(MainEditor.AssetsPath);
-		let allDirectories = Directory.EnumerateDirectories(MainEditor.AssetsPath);
+		let allFiles = Directory.EnumerateFiles(AssetsManager.AssetsPath);
+		let allDirectories = Directory.EnumerateDirectories(AssetsManager.AssetsPath);
 
 		ImGui.PushStyleVar(ImGui.StyleVar.FramePadding, .(8, 6));
 		void DrawFile(String path)

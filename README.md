@@ -8,3 +8,4 @@ Fanty (short for fantasy) is a 2D game engine designed around the GameMaker API.
 2. Download Visual Studio 2022 with C++
 3. Download and install the Beef IDE from (https://www.beeflang.org/)
 4. Follow the steps in [Helper](https://github.com/Starpelly/Fanty/tree/main/FantyEngine/Helper) so the engine can link into raylib
+5. (This is temporary): Goto FantyEngine/AssetsManager.bf and change `AssetsPath` to wherever your Sandbox project is.

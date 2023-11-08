@@ -8,7 +8,7 @@ namespace FantyEngine;
 
 public class AssetsManager
 {
-	// Temp
+	// Temp, Replace with your own path to the Sandbox directory.
 	public const String AssetsPath = @"D:/Fanty/Sandbox/project";
 
 	// Replace Strings with Guids in the future.

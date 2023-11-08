@@ -9,8 +9,6 @@ namespace FantyEditor;
 
 public static class MainEditor
 {
-	public const String AssetsPath = @"D:/Fanty/Sandbox/project";
-
 	private static Texture2D m_BG_Image;
 	private static RenderTexture2D m_BG_Texture;
 
