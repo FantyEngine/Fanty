@@ -88,6 +88,10 @@ public static class Mathf
 	/// Returns largest of two values.
 	public static float Max(float a, float b) { return a > b ? a : b; }
 
+	/// Returns smallest of two values.
+	public static float Min(float a, float b) { return a < b ? a : b; }
+
+
 	/// Clamps value between (min) and (max).
 	public static float Clamp(float value, float min, float max)
 	{

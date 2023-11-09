@@ -29,6 +29,26 @@ public class GameObjectInstance
 	/// Angle (rotation) of the Sprite.
 	public float ImageAngle = 0.0f;
 
+	public Rectangle Bounds
+	{
+		get
+		{
+			let left = x - xOrigin;
+			let width = (HasSprite() ? SpriteAsset.Size.x : 0) * Mathf.Abs(ImageXScale);
+			let top = y - yOrigin;
+			let height = (HasSprite() ? SpriteAsset.Size.y : 0) * Mathf.Abs(ImageYScale);
+
+			/*
+			var left = Mathf.Min(goLeftSide, goRightSide);
+			var right = Mathf.Max(goLeftSide, goRightSide);
+			var top = Mathf.Min(goTopSide, goBottomSide);
+			var bottom = Mathf.Max(goTopSide, goBottomSide);
+			*/
+
+			return .(left, top, width, height);
+		}
+	}
+
 	public bool HasSprite()
 	{
 		return SpriteAsset != null;

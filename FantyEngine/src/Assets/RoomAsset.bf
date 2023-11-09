@@ -79,15 +79,15 @@ public class RoomAsset
 		Background
 	}
 
-	public Layer GetLayerByID(LayerID id)
+	public Result<Layer> GetLayerByID(LayerID id)
 	{
 		for (var layer in InstanceLayers)
 			if (layer.GUID == id)
-				return layer;
+				return .Ok(layer);
 		for (var layer in BackgroundLayers)
 			if (layer.GUID == id)
-				return layer;
+				return .Ok(layer);
 
-		return null;
+		return .Err;
 	}
 }

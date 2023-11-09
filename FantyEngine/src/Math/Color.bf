@@ -394,7 +394,9 @@ public struct Color
 	public static Color whiteSmoke = Color(0xfff5f5f5);
 	public static Color yellow = Color(0xff00ffff);
 	public static Color yellowGreen = Color(0xff32cd9a);
-	public static Color trinkit => Color("407e8d");
-	public static Color unity => Color("314D79");
-	public static Color bgfx => Color("443355");
+	public static Color trinkit = Color("407e8d");
+	public static Color fanty = Color("5f93ba");
+	public static Color fantyEditor = Color("2970bf");
+	public static Color unity = Color("314D79");
+	public static Color bgfx = Color("443355");
 }

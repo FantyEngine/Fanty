@@ -68,6 +68,9 @@ public class Player : GameObject
 
 		wasOnGround = onGround;
 
+		let aimSide = Mathf.Sign(Fanty.MouseX - x);
+		if (aimSide != 0) ImageXScale = aimSide;
+
 		// Animation
 		/*
 		var aimSide = Mathf.Sign(Fanty.MouseX - x);

@@ -30,7 +30,7 @@
 				},
 				{
 					AssetName = "oWall",
-					x = 352,
+					x = 320,
 					y = 256,
 					ImageAngle = 0,
 					ImageSpeed = 1,
@@ -138,8 +138,8 @@
 				},
 				{
 					AssetName = "oPlayer",
-					x = 256,
-					y = 192,
+					x = 448,
+					y = 416,
 					ImageAngle = 0,
 					ImageSpeed = 1,
 					ImageXScale = 1,
@@ -166,7 +166,7 @@
 					y = 224,
 					ImageAngle = 0,
 					ImageSpeed = 1,
-					ImageXScale = 9,
+					ImageXScale = 3,
 					ImageYScale = 1,
 					Visible = false,
 					Solid = false,
@@ -183,6 +183,42 @@
 					Visible = false,
 					Solid = false,
 					Persistent = false
+				},
+				{
+					AssetName = "oWall",
+					x = 128,
+					y = 448,
+					ImageAngle = 0,
+					ImageSpeed = 1,
+					ImageXScale = 18,
+					ImageYScale = 1,
+					Visible = false,
+					Solid = false,
+					Persistent = false
+				},
+				{
+					AssetName = "oWall",
+					x = 256,
+					y = 320,
+					ImageAngle = 0,
+					ImageSpeed = 1,
+					ImageXScale = 2,
+					ImageYScale = 1,
+					Visible = false,
+					Solid = false,
+					Persistent = false
+				},
+				{
+					AssetName = "oWall",
+					x = 128,
+					y = 384,
+					ImageAngle = 0,
+					ImageSpeed = 1,
+					ImageXScale = 1,
+					ImageYScale = 1,
+					Visible = false,
+					Solid = false,
+					Persistent = false
 				}
 			],
 			Name = "Instances",
@@ -195,9 +231,9 @@
 	BackgroundLayers = [
 		{
 			Color = {
-				r = 0,
-				g = 166,
-				b = 255,
+				r = 64,
+				g = 64,
+				b = 64,
 				a = 255
 			},
 			HorizontalTile = false,

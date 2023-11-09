@@ -22,8 +22,10 @@ public static class RoomEditor
 
 	private enum SelectedType
 	{
-		Layer = 0,
-		GameObject
+		Room,
+		GameObject,
+		BackgroundLayer,
+		InstanceLayer
 	}
 
 	private static RaylibBeef.RenderTexture2D m_EditorTexture;
@@ -45,35 +47,14 @@ public static class RoomEditor
 
 		Bon.DeserializeFromFile(ref m_CurrentRoom, scope $"{FantyEngine.AssetsManager.AssetsPath}/rooms/testroom.room");
 
-		/*
-		var bg = new FantyEngine.RoomAsset.BackgroundLayer() { Color = .("#00a6ff") };
-		bg.SetName("Background Layer");
-		m_CurrentRoom.BackgroundLayers.Add(bg);
-
-		var instanceLayer = new FantyEngine.RoomAsset.InstanceLayer();
-		instanceLayer.SetName("Instances");
-		m_CurrentRoom.InstanceLayers.Add(instanceLayer);
-		*/
-		/*
-		var room = scope FantyEngine.RoomAsset();
-		room.Width = 1280;
-		room.Height = 720;
-		room.Viewport0.Visible = true;
-		room.Viewport0.CameraProperties.width = 1280;
-		room.Viewport0.CameraProperties.height = 720;
-		room.Viewport0.ViewportProperties.width = 1280;
-		room.Viewport0.ViewportProperties.height = 720;
-
-		
-
-		var instance = new FantyEngine.GameObjectInstance();
-		instance.[Friend]m_GameObjectAsset = &FantyEngine.AssetsManager.GameObjectAssets["oWall"];
-
-		instanceLayer.GameObjects.Add(Guid.Create(), instance);
-		*/
+		for (var layer in m_CurrentRoom.BackgroundLayers)
+		{
+			layer.GUID = Guid.Create();
+		}
 
 		for (var layer in m_CurrentRoom.InstanceLayers)
 		{
+			layer.GUID = Guid.Create();
 			for (var gameobject in layer.GameObjects)
 			{
 				let id = Guid.Create();
@@ -96,7 +77,11 @@ public static class RoomEditor
 			if (ImGui.BeginChild("Toolbar", .(0, 25)))
 			{
 				ImGui.SetCursorPosX(6);
-				ImGui.SetCursorPosY(5);
+				ImGui.SetCursorPosY(4);
+
+				if (ImGui.Button("Save")) Save();
+				ImGui.SameLine();
+
 				ImGui.Text("Snap:");
 
 				ImGui.SameLine();
@@ -236,7 +221,7 @@ public static class RoomEditor
 
 				for (let marker in GameObjectMarkers.Values)
 				{
-					marker.Update(.(mousePos.x, mousePos.y), .(mouseWorldPos.x, mouseWorldPos.y), mouseInWindow, m_GridEnabled);
+					marker.Update(.(mousePos.x, mousePos.y), .(mouseWorldPos.x, mouseWorldPos.y), mouseInWindow, m_GridEnabled, .(m_GridSize.x, m_GridSize.y));
 					marker.Draw(m_EditorCamera);
 				}
 
@@ -280,47 +265,52 @@ public static class RoomEditor
 						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.x - ((cursorWorldPos.x < 0) ? m_GridSize.x : 0), m_GridSize.x),
 						FantyEngine.Mathf.Round2Nearest(cursorWorldPos.y - ((cursorWorldPos.y < 0) ? m_GridSize.y : 0), m_GridSize.y));
 
-					var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)m_CurrentRoom.GetLayerByID(m_SelectedID);
-					let mouseInViewport = ImGui.IsMouseHoveringRect(ImGui.GetWindowPos(), .(ImGui.GetWindowPos().x + ImGui.GetWindowWidth(), ImGui.GetWindowPos().y + ImGui.GetWindowHeight()));
-
-					if (mouseInViewport)
+					if (m_CurrentRoom.GetLayerByID(m_SelectedID) case .Ok(let layer))
 					{
-						if (RaylibBeef.Raylib.IsKeyDown((int32)RaylibBeef.KeyboardKey.KEY_LEFT_ALT))
+						if (layer.GetType() == typeof(FantyEngine.RoomAsset.InstanceLayer))
 						{
-							if (AssetBrowser.GetSelectedGameObject() != null)
+							var instanceLayer = (FantyEngine.RoomAsset.InstanceLayer)layer;
+
+							let mouseInViewport = ImGui.IsMouseHoveringRect(ImGui.GetWindowPos(), .(ImGui.GetWindowPos().x + ImGui.GetWindowWidth(), ImGui.GetWindowPos().y + ImGui.GetWindowHeight()));
+
+							if (mouseInViewport)
 							{
-								if (AssetBrowser.GetSelectedGameObject().HasSprite())
+								if (RaylibBeef.Raylib.IsKeyDown((int32)RaylibBeef.KeyboardKey.KEY_LEFT_ALT))
 								{
-									FantyEngine.Fanty.DrawSpriteExt(
-										AssetBrowser.GetSelectedGameObject().SpriteAssetName,
-										0,
-										.(cursorGridPos.x, cursorGridPos.y),
-										.(AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.x, AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.y),
-										.(1, 1), 0);
-								}
-
-
-								if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
-								{
-									if (instanceLayer != null)
+									if (AssetBrowser.GetSelectedGameObject() != null)
 									{
-										var goinstance = new FantyEngine.GameObjectInstance();
-										goinstance.SetAssetName(AssetBrowser.GetSelectedGameObject().Name);
-										goinstance.x = cursorGridPos.x;
-										goinstance.y = cursorGridPos.y;
+										if (AssetBrowser.GetSelectedGameObject().HasSprite())
+										{
+											FantyEngine.Fanty.DrawSpriteExt(
+												AssetBrowser.GetSelectedGameObject().SpriteAssetName,
+												0,
+												.(cursorGridPos.x, cursorGridPos.y),
+												.(AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.x, AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.y),
+												.(1, 1), 0);
+										}
 
-										instanceLayer.GameObjects.Add(goinstance);
-										let id = Guid.Create();
-										var marker = new GameObjectMarker(ref goinstance, id);
-										GameObjectMarkers.Add(id, marker);
-										m_Selection.ClickSelect(marker);
+
+										if (RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
+										{
+											if (instanceLayer != null)
+											{
+												var goinstance = new FantyEngine.GameObjectInstance();
+												goinstance.SetAssetName(AssetBrowser.GetSelectedGameObject().Name);
+												goinstance.x = cursorGridPos.x;
+												goinstance.y = cursorGridPos.y;
+
+												instanceLayer.GameObjects.Add(goinstance);
+												let id = Guid.Create();
+												var marker = new GameObjectMarker(ref goinstance, id);
+												GameObjectMarkers.Add(id, marker);
+												m_Selection.ClickSelect(marker);
+											}
+										}
 									}
 								}
 							}
 						}
-						else
-						{
-						}
+
 					}
 				}
 
@@ -353,57 +343,70 @@ public static class RoomEditor
 			
 			if (ImGui.Begin("Hierarchy", null))
 			{
-				if (ImGui.Button("Save"))
-					Save();
-
 				ImGui.PushStyleVar(ImGui.StyleVar.FramePadding, .(8, 6));
-				for (var instanceLayer in m_CurrentRoom.InstanceLayers)
-				{
-					var layerflags = ImGui.TreeNodeFlags.FramePadding | .SpanFullWidth;
-					if (instanceLayer.GUID == m_SelectedID)
-						layerflags |= .Selected;
-					var opened = ImGui.TreeNodeEx(scope $"{instanceLayer.Name} ###{instanceLayer.GUID}", layerflags);
 
+				var roomFlags = ImGui.TreeNodeFlags.FramePadding | .SpanFullWidth | .Leaf | .DefaultOpen;
+				if (m_SelectedType == .Room)
+					roomFlags |= .Selected;
+				if (ImGui.TreeNodeEx("Room", roomFlags))
+				{
 					if (ImGui.IsItemClicked())
 					{
-						m_SelectedID = instanceLayer.GUID;
-						m_SelectedType = .Layer;
+						m_SelectedID = Guid.Empty;
+						m_SelectedType = .Room;
 					}
 
-					if (opened)
+					for (var instanceLayer in m_CurrentRoom.InstanceLayers)
 					{
-						for (var gameobject in instanceLayer.GameObjects)
-						{
-							var name = gameobject.GameObjectAsset.Name;
-							var flags = ImGui.TreeNodeFlags.Leaf | .SpanFullWidth;
-							// if (gameobject.GameObjectID == m_SelectedID)
-								// flags |= .Selected;
-							ImGui.TreeNodeEx(name, flags);
+						var layerflags = ImGui.TreeNodeFlags.FramePadding | .SpanFullWidth | .Leaf;
+						if (instanceLayer.GUID == m_SelectedID)
+							layerflags |= .Selected;
+						ImGui.TreeNodeEx(scope $"{instanceLayer.Name} ###{instanceLayer.GUID}", layerflags);
 
-							if (ImGui.IsItemClicked())
+						if (ImGui.IsItemClicked())
+						{
+							m_SelectedID = instanceLayer.GUID;
+							m_SelectedType = .InstanceLayer;
+						}
+						/*
+						if (opened)
+						{
+							for (var gameobject in instanceLayer.GameObjects)
 							{
-								// m_SelectedLayer = gameobject.key;
-								// selectedType = .GameObject;
+								var name = gameobject.GameObjectAsset.Name;
+								var flags = ImGui.TreeNodeFlags.Leaf | .SpanFullWidth;
+								// if (gameobject.GameObjectID == m_SelectedID)
+									// flags |= .Selected;
+								ImGui.TreeNodeEx(name, flags);
+
+								if (ImGui.IsItemClicked())
+								{
+									// Temp
+
+									// m_Selection.ClickSelect(GameObjectMarkers.get)
+								}
+
+								ImGui.TreePop();
 							}
 
-							ImGui.TreePop();
+						}*/
+						ImGui.TreePop();
+					}
+
+					for (var backgroundLayer in m_CurrentRoom.BackgroundLayers)
+					{
+						var flags = ImGui.TreeNodeFlags.Leaf | .FramePadding | .SpanFullWidth;
+						if (backgroundLayer.GUID == m_SelectedID)
+							flags |= .Selected;
+						ImGui.TreeNodeEx(scope $"{backgroundLayer.Name} ###{backgroundLayer.GUID}", flags);
+
+						if (ImGui.IsItemClicked())
+						{
+							m_SelectedID = backgroundLayer.GUID;
+							m_SelectedType = .BackgroundLayer;
 						}
 
 						ImGui.TreePop();
-					}
-				}
-
-				for (var backgroundLayer in m_CurrentRoom.BackgroundLayers)
-				{
-					var flags = ImGui.TreeNodeFlags.Leaf | .FramePadding | .SpanFullWidth;
-					// if (backgroundLayer.key == selectedID)
-						// flags |= .Selected;
-					ImGui.TreeNodeEx(scope $"{backgroundLayer.Name} ###{backgroundLayer.GUID}", flags);
-
-					if (ImGui.IsItemClicked())
-					{
-						// selectedID = backgroundLayer.key;
-						// selectedType = .Layer;
 					}
 
 					ImGui.TreePop();

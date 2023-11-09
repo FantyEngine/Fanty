@@ -39,16 +39,14 @@ public class GameObjectMarker
 		this.EditorID = ID;
 	}
 
-	public void Update(Vector2 cursorPos, Vector2 cursorWorldPos, bool mouseInViewport, bool snapping)
+	public void Update(Vector2 cursorPos, Vector2 cursorWorldPos, bool mouseInViewport, bool snapping, Vector2Int snapSize)
 	{
 		if (mouseInViewport && RaylibBeef.Raylib.IsMouseButtonPressed((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
 		{
-			let goLeftSide = GameObject.x - GameObject.xOrigin;
-			let goRightSide = goLeftSide + (GameObject.HasSprite() ? GameObject.SpriteAsset.Size.x : 0) * GameObject.ImageXScale;
-			let goTopSide = GameObject.y - GameObject.yOrigin;
-			let goBottomSide = goTopSide + (GameObject.HasSprite() ? GameObject.SpriteAsset.Size.y : 0) * GameObject.ImageYScale;
-			let inX = FantyEngine.Mathf.IsWithin(cursorWorldPos.x, goLeftSide, goRightSide);
-			let inY = FantyEngine.Mathf.IsWithin(cursorWorldPos.y, goTopSide, goBottomSide);
+			let bbox = GameObject.Bounds;
+
+			let inX = FantyEngine.Mathf.IsWithin(cursorWorldPos.x, bbox.left, bbox.right);
+			let inY = FantyEngine.Mathf.IsWithin(cursorWorldPos.y, bbox.top, bbox.bottom);
 
 			if (inX && inY)
 			{
@@ -68,21 +66,27 @@ public class GameObjectMarker
 			{
 			case .Right:
 				GameObject.ImageXScale = ((cursorWorldPos.x - m_ResizingStartMousePos.x + resizeOffset) / GameObject.SpriteAsset.Size.x) + m_ResizingStartScale.x;
-				if (snapping) GameObject.ImageXScale = Mathf.Round2Nearest(GameObject.ImageXScale, GameObject.SpriteAsset.Size.x / 32);
+				if (snapping) GameObject.ImageXScale = Mathf.Round2Nearest(GameObject.ImageXScale, GameObject.SpriteAsset.Size.x / snapSize.x);
+
+				if (GameObject.ImageXScale < 0)
+				{
+					GameObject.x = (cursorWorldPos.x + GameObject.xOrigin + resizeOffset);
+					if (snapping) GameObject.x = Mathf.Round2Nearest(GameObject.x, snapSize.x);
+				}
 				break;
 			case .Left:
 				GameObject.x = (cursorWorldPos.x + GameObject.xOrigin + resizeOffset);
-				if (snapping) GameObject.x = Mathf.Round2Nearest(GameObject.x, 32);
+				if (snapping) GameObject.x = Mathf.Round2Nearest(GameObject.x, snapSize.x);
 
 				GameObject.ImageXScale = ((m_ResizingStartPos.x - GameObject.x) / GameObject.SpriteAsset.Size.x) + m_ResizingStartScale.x;
 				break;
 			case .Bottom:
 				GameObject.ImageYScale = ((cursorWorldPos.y - m_ResizingStartMousePos.y + resizeOffset) / GameObject.SpriteAsset.Size.y) + m_ResizingStartScale.y;
-				if (snapping) GameObject.ImageYScale = Mathf.Round2Nearest(GameObject.ImageYScale, GameObject.SpriteAsset.Size.y / 32);
+				if (snapping) GameObject.ImageYScale = Mathf.Round2Nearest(GameObject.ImageYScale, GameObject.SpriteAsset.Size.y / snapSize.y);
 				break;
 			case .Top:
 				GameObject.y = (cursorWorldPos.y + GameObject.yOrigin + resizeOffset);
-				if (snapping) GameObject.y = Mathf.Round2Nearest(GameObject.y, 32);
+				if (snapping) GameObject.y = Mathf.Round2Nearest(GameObject.y, snapSize.y);
 
 				GameObject.ImageYScale = ((m_ResizingStartPos.y - GameObject.y) / GameObject.SpriteAsset.Size.y) + m_ResizingStartScale.y;
 				break;
@@ -95,8 +99,8 @@ public class GameObjectMarker
 			GameObject.y = cursorWorldPos.y - m_StartMovingOffset.y;
 			if (snapping)
 			{
-				GameObject.x = Mathf.Round2Nearest(GameObject.x, 32);
-				GameObject.y = Mathf.Round2Nearest(GameObject.y, 32);
+				GameObject.x = Mathf.Round2Nearest(GameObject.x, snapSize.x);
+				GameObject.y = Mathf.Round2Nearest(GameObject.y, snapSize.y);
 			}
 		}
 		
@@ -132,10 +136,12 @@ public class GameObjectMarker
 
 		if (IsSelected())
 		{
-			let gameobjectScreenPosMin = RaylibBeef.Raylib.GetWorldToScreen2D(.(GameObject.x - GameObject.xOrigin, GameObject.y - GameObject.yOrigin), editorCamera);
-			let gameobjectScreenPosMax = RaylibBeef.Vector2(
-				gameobjectScreenPosMin.x + (GameObject.SpriteAsset.Size.x * GameObject.ImageXScale * editorCamera.zoom),
-				gameobjectScreenPosMin.y + (GameObject.SpriteAsset.Size.y * GameObject.ImageYScale * editorCamera.zoom));
+			let bbox = GameObject.Bounds;
+			let minScreen = RaylibBeef.Raylib.GetWorldToScreen2D(.(bbox.left, bbox.top), editorCamera);
+			let maxScreen = RaylibBeef.Raylib.GetWorldToScreen2D(.(bbox.right, bbox.bottom), editorCamera);
+			let gameobjectScreenPosMin = Vector2(minScreen.x, minScreen.y);
+			let gameobjectScreenPosMax = Vector2(maxScreen.x, maxScreen.y);
+
 			RoomEditor.DrawRectangle(.(
 				gameobjectScreenPosMin.x,
 				gameobjectScreenPosMin.y,
