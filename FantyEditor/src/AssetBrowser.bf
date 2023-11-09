@@ -76,14 +76,19 @@ public static class AssetBrowser
 							coordinates.x / (float)AssetsManager.MainTexturePage.width, coordinates.y / (float)AssetsManager.MainTexturePage.height,
 							sprite.value.Size.x / (float)AssetsManager.MainTexturePage.width, sprite.value.Size.y / (float)AssetsManager.MainTexturePage.height
 							);
-						ImGui.GetWindowDrawList().AddImage
-							((ImGui.TextureID)(int)AssetsManager.MainTexturePage.id,
-							.(ImGui.GetCursorScreenPos().x, ImGui.GetCursorScreenPos().y + 1),
-							.(ImGui.GetCursorScreenPos().x + 24, ImGui.GetCursorScreenPos().y + 1 + 24),
-							.(normalizedTextureRegion.x, normalizedTextureRegion.y),
-							.(normalizedTextureRegion.x + normalizedTextureRegion.width, normalizedTextureRegion.y + normalizedTextureRegion.height));
 
+						let xref = ImGui.GetCursorPosX();
 						ImGui.TreeNodeEx(sprite.key, fileNodeFlags);
+						{
+							ImGui.SameLine();
+							ImGui.SetCursorPosX(xref);
+							ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 1);
+							ImGui.Image
+								((ImGui.TextureID)(int)AssetsManager.MainTexturePage.id, .(24, 24),
+								.(normalizedTextureRegion.x, normalizedTextureRegion.y),
+								.(normalizedTextureRegion.x + normalizedTextureRegion.width, normalizedTextureRegion.y + normalizedTextureRegion.height));
+
+						}
 						ImGui.TreePop();
 					}
 					ImGui.TreePop();
@@ -93,34 +98,39 @@ public static class AssetBrowser
 				{
 					for (var object in AssetsManager.GameObjectAssets)
 					{
-						ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 12);
-						if (object.value.HasSprite())
-						{
-							var sprite = AssetsManager.Sprites[object.value.SpriteAssetName];
-							var coordinates = sprite.Frames[0].TexturePageCoordinates;
-							var normalizedTextureRegion =
-								Rectangle(
-								coordinates.x / (float)AssetsManager.MainTexturePage.width, coordinates.y / (float)AssetsManager.MainTexturePage.height,
-								sprite.Size.x / (float)AssetsManager.MainTexturePage.width, sprite.Size.y / (float)AssetsManager.MainTexturePage.height
-								);
-							ImGui.GetWindowDrawList().AddImage
-								((ImGui.TextureID)(int)AssetsManager.MainTexturePage.id,
-								.(ImGui.GetCursorScreenPos().x, ImGui.GetCursorScreenPos().y + 1),
-								.(ImGui.GetCursorScreenPos().x + 24, ImGui.GetCursorScreenPos().y + 1 + 24),
-								.(normalizedTextureRegion.x, normalizedTextureRegion.y),
-								.(normalizedTextureRegion.x + normalizedTextureRegion.width, normalizedTextureRegion.y + normalizedTextureRegion.height));
-						}
-
 						var flags = fileNodeFlags;
 						if (m_SelectedGameObject == object.key)
 							flags |= .Selected;
+						ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 12);
 
+						let xref = ImGui.GetCursorPosX();
 						ImGui.TreeNodeEx(object.key, flags);
-						if (ImGui.IsItemClicked())
 						{
-							if (m_SelectedGameObject != null)
-								delete m_SelectedGameObject;
-							m_SelectedGameObject = new .(object.key);
+							if (ImGui.IsItemClicked())
+							{
+								if (m_SelectedGameObject != null)
+									delete m_SelectedGameObject;
+								m_SelectedGameObject = new .(object.key);
+							}
+
+							if (object.value.HasSprite())
+							{
+								var sprite = AssetsManager.Sprites[object.value.SpriteAssetName];
+								var coordinates = sprite.Frames[0].TexturePageCoordinates;
+								var normalizedTextureRegion =
+									Rectangle(
+									coordinates.x / (float)AssetsManager.MainTexturePage.width, coordinates.y / (float)AssetsManager.MainTexturePage.height,
+									sprite.Size.x / (float)AssetsManager.MainTexturePage.width, sprite.Size.y / (float)AssetsManager.MainTexturePage.height
+									);
+
+								ImGui.SameLine();
+								ImGui.SetCursorPosX(xref);
+								ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 1);
+								ImGui.Image
+									((ImGui.TextureID)(int)AssetsManager.MainTexturePage.id, .(24, 24),
+									.(normalizedTextureRegion.x, normalizedTextureRegion.y),
+									.(normalizedTextureRegion.x + normalizedTextureRegion.width, normalizedTextureRegion.y + normalizedTextureRegion.height));
+							}
 						}
 						ImGui.TreePop();
 					}

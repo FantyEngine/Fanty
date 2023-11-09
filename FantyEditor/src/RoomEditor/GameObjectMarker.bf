@@ -72,10 +72,9 @@ public class GameObjectMarker
 				break;
 			case .Left:
 				GameObject.x = (cursorWorldPos.x + GameObject.xOrigin + resizeOffset);
-				GameObject.ImageXScale = ((m_ResizingStartPos.x - GameObject.x) / GameObject.SpriteAsset.Size.x) + m_ResizingStartScale.x;
-
 				if (snapping) GameObject.x = Mathf.Round2Nearest(GameObject.x, 32);
-				if (snapping) GameObject.ImageXScale = Mathf.Round2Nearest(GameObject.ImageXScale, GameObject.SpriteAsset.Size.x / 32) + 1;
+
+				GameObject.ImageXScale = ((m_ResizingStartPos.x - GameObject.x) / GameObject.SpriteAsset.Size.x) + m_ResizingStartScale.x;
 				break;
 			case .Bottom:
 				GameObject.ImageYScale = ((cursorWorldPos.y - m_ResizingStartMousePos.y + resizeOffset) / GameObject.SpriteAsset.Size.y) + m_ResizingStartScale.y;
@@ -83,10 +82,9 @@ public class GameObjectMarker
 				break;
 			case .Top:
 				GameObject.y = (cursorWorldPos.y + GameObject.yOrigin + resizeOffset);
-				GameObject.ImageYScale = ((m_ResizingStartPos.y - GameObject.y) / GameObject.SpriteAsset.Size.y) + m_ResizingStartScale.y;
-
 				if (snapping) GameObject.y = Mathf.Round2Nearest(GameObject.y, 32);
-				if (snapping) GameObject.ImageYScale = Mathf.Round2Nearest(GameObject.ImageYScale, GameObject.SpriteAsset.Size.y / 32) + 1;
+
+				GameObject.ImageYScale = ((m_ResizingStartPos.y - GameObject.y) / GameObject.SpriteAsset.Size.y) + m_ResizingStartScale.y;
 				break;
 			default:
 			}
@@ -95,8 +93,11 @@ public class GameObjectMarker
 		{
 			GameObject.x = cursorWorldPos.x - m_StartMovingOffset.x;
 			GameObject.y = cursorWorldPos.y - m_StartMovingOffset.y;
-			if (snapping) GameObject.x = Mathf.Round2Nearest(GameObject.x, 32);
-			if (snapping) GameObject.y = Mathf.Round2Nearest(GameObject.y, 32);
+			if (snapping)
+			{
+				GameObject.x = Mathf.Round2Nearest(GameObject.x, 32);
+				GameObject.y = Mathf.Round2Nearest(GameObject.y, 32);
+			}
 		}
 		
 		if (RaylibBeef.Raylib.IsMouseButtonReleased((int32)RaylibBeef.MouseButton.MOUSE_BUTTON_LEFT))
