@@ -4,12 +4,19 @@ using Bon;
 namespace FantyEngine;
 
 [BonTarget]
-public class GameObjectAsset
+public class GameObjectAsset : Asset
 {
 	public String Name = new .() ~ if (_ != null) delete _;
 
-	public String SpriteAssetName = new .() ~ if (_ != null) delete _;
-	private SpriteAsset* SpriteAsset;
+	public String SpriteAssetID ~ if (_ != null) delete _;
+	private SpriteAsset* m_SpriteAsset;
+	public SpriteAsset SpriteAsset
+	{
+		get
+		{
+			return *m_SpriteAsset;
+		}
+	}
 
 	public String CollisionMaskAsset ~ if (_ != null) delete _;
 	public bool CollisionMaskSameAsSprite = true;
@@ -20,30 +27,32 @@ public class GameObjectAsset
 
 	public void SetName(String name)
 	{
-		delete Name;
-		this.Name = new String(name);
+		this.Name.Set(name);
 	}
 
-	public void SetSpriteAssetName(String name)
+	public void SetSpriteAsset(ref String id)
 	{
-		var newName = new String(name);
-		delete SpriteAssetName;
-		this.SpriteAssetName = newName;
+		SpriteAssetID = id;
 
-		if (AssetsManager.Sprites.ContainsKey(SpriteAssetName))
-			this.SpriteAsset = &AssetsManager.Sprites[SpriteAssetName];
+		if (AssetsManager.Sprites.ContainsKey(id))
+			this.m_SpriteAsset = &AssetsManager.Sprites[id];
+	}
+
+	public void SetSpriteAsset(ref SpriteAsset asset)
+	{
+		this.m_SpriteAsset = &asset;
 	}
 
 	public bool HasSprite()
 	{
-		return SpriteAsset != null;
+		return m_SpriteAsset != null;
 	}
 
 	public SpriteAsset GetSpriteAsset()
 	{
 		if (HasSprite())
 		{
-			return *SpriteAsset;
+			return *m_SpriteAsset;
 		}
 		return null;
 	}

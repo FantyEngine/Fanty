@@ -1,6 +1,6 @@
 {
 	Name = "oPlayer",
-	SpriteAssetName = "sPlayer",
+	SpriteAssetID = "hmmm",
 	CollisionMaskAsset = null,
 	CollisionMaskSameAsSprite = true,
 	Visible = false,

@@ -11,7 +11,6 @@ public class AssetsManager
 	// Temp, Replace with your own path to the Sandbox directory.
 	public const String AssetsPath = @"D:/Fanty/Sandbox/project";
 
-	// Replace Strings with Guids in the future.
 	public static Dictionary<String, GameObjectAsset> GameObjectAssets = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
 	public static Dictionary<String, SpriteAsset> Sprites = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
 	public static Dictionary<String, RoomAsset> Rooms = new .() ~ DeleteDictionaryAndKeysAndValues!(_);
@@ -38,10 +37,9 @@ public class AssetsManager
 				var object = new FantyEngine.GameObjectAsset();
 				var dataFile = scope String();
 
-				var name = Path.GetFileNameWithoutExtension(path, .. new .());
-
 				if (File.ReadAllText(path, dataFile) == .Ok)
 				{
+					
 					Result<GameObjectAsset> Load()
 					{
 						Bon.Deserialize(ref object, dataFile);
@@ -50,8 +48,12 @@ public class AssetsManager
 
 					if (Load() != .Err)
 					{
-						object.SetSpriteAssetName(object.SpriteAssetName);
-						GameObjectAssets.Add(name, object);
+						object.FileLocation.Set(path);
+
+						object.SetSpriteAsset(ref object.SpriteAssetID);
+
+						let id = Path.GetFileNameWithoutExtension(path, .. new .());
+						GameObjectAssets.Add(id, object);
 					}
 				}
 			}
@@ -64,7 +66,7 @@ public class AssetsManager
 		{
 			RaylibBeef.Raylib.UnloadTexture(MainTexturePage);
 
-			DeleteDictionaryAndKeysAndValues!(Sprites);
+			DeleteDictionaryAndValues!(Sprites);
 			Sprites = new .();
 		}
 
@@ -93,6 +95,8 @@ public class AssetsManager
 					}
 					if (LoadSprite() != .Err)
 					{
+						sprite.FileLocation.Set(directoryPath);
+
 						for (var i < sprite.Frames.Count)
 						{
 							let spritePath = scope $"{directoryPath}/{i}.png";
@@ -114,7 +118,8 @@ public class AssetsManager
 							RaylibBeef.Raylib.UnloadImage(src);
 						}
 
-						Sprites.Add(folder.GetFileName(.. new .()), sprite);
+						let id = folder.GetFileName(.. new .());
+						Sprites.Add(id, sprite);
 					}
 				}
 				spriteIndex++;
@@ -127,5 +132,41 @@ public class AssetsManager
 
 		MainTexturePage = RaylibBeef.Raylib.LoadTextureFromImage(texturePage);
 		RaylibBeef.Raylib.UnloadImage(texturePage);
+	}
+
+
+	public static void RenameSpriteAsset(String key, String newName)
+	{
+		// SpriteAsset asset = ?;
+		for (var sprite in Sprites)
+		{
+			if (sprite.key == key)
+			{
+				sprite.key.Set(scope .(newName));
+				// asset = sprite.value;
+			}
+		}
+		for (var object in GameObjectAssets)
+		{
+			if (object.value.SpriteAssetID == key)
+			{
+				object.value.SpriteAssetID.Set(newName);
+
+				Console.WriteLine(object.value.FileLocation);
+				var ser = Bon.Serialize(object.value, .. scope .());
+
+				if (File.WriteAllText(object.value.FileLocation, ser) == .Ok)
+				{
+
+					Console.WriteLine(ser);
+				}
+			}
+			// object.value.SetSpriteAsset(ref asset);
+		}
+	}
+
+	public static SpriteAsset GetSprite(ref String id)
+	{
+		return Sprites[id];
 	}
 }

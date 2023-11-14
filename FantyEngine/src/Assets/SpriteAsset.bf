@@ -4,7 +4,7 @@ using Bon;
 namespace FantyEngine;
 
 [BonTarget]
-public class SpriteAsset
+public class SpriteAsset : Asset
 {
 	public int FPS;
 

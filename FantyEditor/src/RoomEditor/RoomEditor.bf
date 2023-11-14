@@ -282,7 +282,7 @@ public static class RoomEditor
 										if (AssetBrowser.GetSelectedGameObject().HasSprite())
 										{
 											FantyEngine.Fanty.DrawSpriteExt(
-												AssetBrowser.GetSelectedGameObject().SpriteAssetName,
+												scope .(AssetBrowser.GetSelectedGameObject().SpriteAssetID),
 												0,
 												.(cursorGridPos.x, cursorGridPos.y),
 												.(AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.x, AssetBrowser.GetSelectedGameObject().GetSpriteAsset().Origin.y),

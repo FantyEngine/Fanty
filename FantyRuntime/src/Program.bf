@@ -9,7 +9,12 @@ class Program
 {
 	public static void Main(String[] args)
 	{
-		var game = scope Game();
+		Raylib.InitWindow(1280, 720, "Fanty Runtime - Sandbox");
+
+		// var game = scope Game();
+		AssetsManager.LoadAllAssets();
+
+		Raylib.CloseWindow();
 
 		/*
 		Raylib.SetConfigFlags((int32)(ConfigFlags.FLAG_VSYNC_HINT));

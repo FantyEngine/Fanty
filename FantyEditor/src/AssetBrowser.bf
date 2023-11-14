@@ -12,6 +12,9 @@ public static class AssetBrowser
 
 	private static Dictionary<String, RaylibBeef.Texture2D> m_Textures = new .() ~ DeleteDictionaryAndKeys!(_);
 
+	private static String m_NodeToRename = null ~ if (_ != null) delete _;
+	private static String m_NewNodeName = null ~ if (_ != null) delete _;
+
 	public static void Init()
 	{
 		void LoadTexture(String name)
@@ -46,8 +49,8 @@ public static class AssetBrowser
 		ImGui.PushStyleVar(ImGui.StyleVar.WindowPadding, .(0, 0));
 		if (ImGui.Begin("Asset Browser", null))
 		{
-			let directoryNodeFlags = ImGui.TreeNodeFlags.None | .FramePadding | .SpanFullWidth;
-			var fileNodeFlags = ImGui.TreeNodeFlags.None | .FramePadding | .SpanFullWidth | .Leaf;
+			let directoryNodeFlags = ImGui.TreeNodeFlags.None | .FramePadding;
+			var fileNodeFlags = ImGui.TreeNodeFlags.None | .FramePadding | .Leaf;
 
 			bool BeginAssetGroup(String name)
 			{
@@ -78,16 +81,60 @@ public static class AssetBrowser
 							);
 
 						let xref = ImGui.GetCursorPosX();
-						ImGui.TreeNodeEx(sprite.key, fileNodeFlags);
+						ImGui.TreeNodeEx(scope $"{sprite.key}", .Leaf | .FramePadding | .SpanFullWidth);
 						{
+							if (ImGui.IsItemClicked() && m_NodeToRename != sprite.key)
+							{
+								delete m_NodeToRename;
+								delete m_NewNodeName;
+								m_NodeToRename = new .(sprite.key);
+								m_NewNodeName = new .(sprite.key);
+							}
+
 							ImGui.SameLine();
 							ImGui.SetCursorPosX(xref);
 							ImGui.SetCursorPosY(ImGui.GetCursorPosY() + 1);
-							ImGui.Image
+							/*ImGui.Image
 								((ImGui.TextureID)(int)AssetsManager.MainTexturePage.id, .(24, 24),
 								.(normalizedTextureRegion.x, normalizedTextureRegion.y),
-								.(normalizedTextureRegion.x + normalizedTextureRegion.width, normalizedTextureRegion.y + normalizedTextureRegion.height));
+								.(normalizedTextureRegion.x + normalizedTextureRegion.width, normalizedTextureRegion.y + normalizedTextureRegion.height));*/
+							ImGui.Dummy(.(24, 24));
 
+							if (m_NodeToRename != null)
+							{
+								if ( m_NodeToRename == sprite.key)
+								{
+									ImGui.SameLine();
+									ImGui.SetCursorPosX(xref + 22);
+
+									if (ImGui.IsWindowFocused(ImGui.FocusedFlags.RootAndChildWindows) && !ImGui.IsAnyItemActive() && !ImGui.IsMouseClicked(0))
+										ImGui.SetKeyboardFocusHere(0);
+
+									if (ImGui.InputText("###rename", m_NewNodeName, sizeof(uint64), .EnterReturnsTrue | .AlwaysOverwrite))
+									{
+										let newName = m_NewNodeName;
+										AssetsManager.RenameSpriteAsset(m_NodeToRename, newName);
+
+										let folders = Directory.EnumerateDirectories(scope $"{AssetsManager.AssetsPath}/sprites");
+										for (var folder in folders)
+										{
+											let directoryPath = folder.GetFilePath(.. scope .());
+											let name = folder.GetFileName(.. scope .());
+
+											if (name == m_NodeToRename)
+											{
+												let newPath = scope $"{AssetsManager.AssetsPath}/sprites/{newName}";
+												Directory.Move(directoryPath, newPath);
+												break;
+											}
+										}
+
+										DeleteAndNullify!(m_NodeToRename);
+										DeleteAndNullify!(m_NewNodeName);
+									}
+								}
+
+							}
 						}
 						ImGui.TreePop();
 					}
@@ -115,7 +162,7 @@ public static class AssetBrowser
 
 							if (object.value.HasSprite())
 							{
-								var sprite = AssetsManager.Sprites[object.value.SpriteAssetName];
+								var sprite = object.value.SpriteAsset;
 								var coordinates = sprite.Frames[0].TexturePageCoordinates;
 								var normalizedTextureRegion =
 									Rectangle(
@@ -163,6 +210,21 @@ public static class AssetBrowser
 					}
 					ImGui.TreePop();
 				}
+			}
+			ImGui.PopStyleVar();
+
+			ImGui.PushStyleVar(ImGui.StyleVar.WindowPadding, .(6, 6));
+			if (ImGui.BeginPopupContextWindow())
+			{
+				if (ImGui.Selectable("Add Sprite"))
+				{
+				}
+				ImGui.Separator();
+				ImGui.Selectable("Collapse");
+				ImGui.Selectable("Rename", false, .Disabled);
+				ImGui.Selectable("Delete", false, .Disabled);
+				ImGui.Selectable("Open in File Explorer");
+				ImGui.EndPopup();
 			}
 			ImGui.PopStyleVar();
 		}

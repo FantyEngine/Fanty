@@ -5,7 +5,7 @@ using Bon;
 namespace FantyEngine;
 
 [BonTarget]
-public class RoomAsset
+public class RoomAsset : Asset
 {
 	public int Width = 1024;
 	public int Height = 768;

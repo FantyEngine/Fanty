@@ -113,11 +113,13 @@ public class GameObjectMarker
 
 	public void Draw(RaylibBeef.Camera2D editorCamera)
 	{
+		return;
+		/*
 		let gameobject = GameObject;
 		if (gameobject.HasSprite())
 		{
 			FantyEngine.Fanty.DrawSpriteExt(
-				gameobject.GameObjectAsset.SpriteAssetName,
+				gameobject.GameObjectAsset.SpriteAssetID,
 				0,
 				.(gameobject.x, gameobject.y),
 				.(gameobject.xOrigin, gameobject.yOrigin),
@@ -128,6 +130,7 @@ public class GameObjectMarker
 			RaylibBeef.Raylib.DrawCircle((int32)gameobject.x, (int32)gameobject.y, 16, Color.gray);
 			RaylibBeef.Raylib.DrawText("?", (int32)gameobject.x - 4, (int32)gameobject.y - 6, 16, Color.white);
 		}
+		*/
 	}
 
 	public void DrawGui(RaylibBeef.Camera2D editorCamera, Vector2 cursorPos, Vector2 cursorWorldPos)

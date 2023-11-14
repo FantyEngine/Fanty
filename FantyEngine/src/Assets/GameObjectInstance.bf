@@ -14,8 +14,28 @@ public class GameObjectInstance
 		AssetName = new .(value);
 	}
 
-	public GameObjectAsset GameObjectAsset { get { if (String.IsNullOrEmpty(AssetName)) return null; return AssetsManager.GameObjectAssets[AssetName]; } }
-	public SpriteAsset SpriteAsset { get { if (GameObjectAsset != null) return AssetsManager.Sprites[GameObjectAsset.SpriteAssetName]; else return null; } }
+	public GameObjectAsset GameObjectAsset
+	{
+		get
+		{
+			if (String.IsNullOrEmpty(AssetName) || !AssetsManager.GameObjectAssets.ContainsKey(AssetName))
+				return null;
+
+			return AssetsManager.GameObjectAssets[AssetName];
+		}
+	}
+	public SpriteAsset SpriteAsset
+	{
+		get
+		{
+			if (GameObjectAsset == null)
+				return null;
+			if (!AssetsManager.Sprites.ContainsKey(GameObjectAsset.SpriteAssetID))
+				return null;
+
+			return AssetsManager.Sprites[GameObjectAsset.SpriteAssetID];
+		}
+	}
 
 	public Guid InstanceLayerID { get; private set; }
 	public Guid GameObjectID { get; private set; }
